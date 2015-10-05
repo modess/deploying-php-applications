@@ -1,0 +1,970 @@
+# 5. Tools
+
+So far we've covered theory almost exclusively, now it's time to get more into the technical aspects of the deployment process.
+
+In chapter 2 about Goals, I wrote about the [maturity](#maturity) a deployment process usually goes through. Almost at the bottom (or top, depending on how you see it) of the list was the bullet on **tools**. The beauty of this is that it will replace or extend the steps taken in the previous parts of maturity. That is why I think it's the best place to start if you're setting up a deployment process that is sustainable for your applications lifetime. If your current process are in the previous steps of maturity, replacing them with a tool is nothing major in most cases. And you probably should do that.
+
+What a tool provides for us is a way of gathering many things related to your deploy in one place. The core principle of the tools is **automation**. We've already covered that part and why it's important in both chapter 1 and 2. It also provide a way of making your process readable and you will achieve a kind of self documentation for your process by using any of the tools. It could be considered a manifest for it.
+
+Most of the tools also do an excellent job in separating your environments. They make it easy to make every deploy to any environment repeatable. Perhaps you don't want to minify your Javascript and CSS files when you deploy to a testing environment? This makes debugging easier. But when you deploy to the staging or production environment you want to do it (or I would say, should do it). The tools will help you run the commands you want, when you want and where you want. Some of them also make sure that every person deploying have the correct endpoints to the environments for the deploys. 
+
+I will below cover a few of the common tools. They all have their pros and cons as with everything when it comes to technology. I won't tell you if one tool is better than another because it's a matter of taste and what works best for you and your application. With each tool I'll provide a cookbook on how to automate builds and also how to automate atomic builds. These will serve the purpose of how to get started with them and provides a good boilerplate set up for extending them to a full fledged deploy tool.
+
+{pagebreak}
+ 
+## Git hooks
+
+When it comes to simplicity, nothing beats git hooks in my opinion. But this comes with a big **if** though. That **if** is if you don't want to do anything really fancy with it. When you dive deeper and find out how the hooks work internally, it can get a bit messy. But don't worry, we'll get there. And for simple builds I think it's great.
+
+They require you to use Git as your version control system. But triggering scripts on pushes to remotes is a very good tool to use. They can do much more than that and there is currently **17 different** ones to chose from. What they do is that they hook into different places where Git performs operations. They are divided in two groups, those who runs client side and those who runs server side.
+
+My basis for using git hooks here is to achieve automation for builds. But there are other things that can be accomplished with hooks as well. Enforcing policies is one of them. By using the right hooks, you can reject pushes that contains things that break a policy. What kind of policy that might be is up to you, but it could be how commit messages are formatted or who made the push or commits. 
+
+Here are the available hooks, on which side they are on, when they trigger and example of usages. The examples are just there to give you a general idea of what can be accomplished with it.
+
+| Hook               | Side   | Trigger  | Example of usage |
+|--------------------|--------|----------| -----------------|
+| pre-commit         | client | Before a commit is done | Checking code style or linting
+| prepare-commit-msg | client | After the default commit message is created | Changing the default message. Could be providing a template for commit messages
+| commit-msg         | client | After a commit message is provided | Validating the commit message. If this does not pass the commit will be aborted
+| post-commit        | client | After a commit is committed | Notifications      
+| applypatch-msg     | client | Before a patch proposed commit message is applied | Validate the message just as with *commit-msg*
+| pre-applypatch     | client | After a patch is applied, but before the commit is created | Verify the contents of the patch by running test suites for example
+| post-applypatch    | client | After a patch commit is created |  Notifications   
+| pre-rebase         | client | Before a rebase operation | Denying rebasing of pushed commits
+| post-checkout      | client | After a checkout operation is done | Verify the application state. Running a `composer dump-autoload` here is a good example.        
+| post-merge         | client | After a merge operation is done | Restore data in the working tree that git can't track   
+| post-rewrite       | client | When a command that replaces commits runs | See *post-merge* and *post-checkout*                  
+| pre-push           | client | During a push. After the remote refs are updated but before any objects have been transferred | Validate a set of refs         
+| pre-auto-gc        | client | Before garbage collection | Notify that it's done or abort it if the timing is bad  
+| pre-receive        | server | Before receiving anything from a push | Access control         
+| post-receive       | server | After receiving a push | Notifications     
+| update             | server | Before receiving anything from a push, once per pushed branch | Same as *pre-receive* but branch specifically         
+| post-update        | server | After refs have been updated from a push | Builds
+
+### Making them run
+
+All hooks are located in `.git/hooks` in your checked out repository. This means that you can have a different set of hooks that run depending on where your repository is checked out. A hook for the production environment will most likely differ to some degree for the same hook in your development environment.
+
+The hooks should have a filename that corresponds to the hook name. This is how you would set up *pre-commit*:
+
+~~~
+touch .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+~~~
+
+We have to make them executable, this is important or otherwise they won't run. They will actually silently fail if not executable, you will not get any kind of notice on this. We'll get into more on what you can put in your hooks later.
+
+Take note that when a hook runs, its working directory will be `.git`. So if you need to do anything in another folder, you need to use the *cd* command there first or specify absolute or relative paths. This is also important if you manually want to run a hook. Then you need to be in the `.git` directory and run a hook with `bash hooks/post-update` for example.
+
+T> ### Version control your hooks
+T>
+T> If you want your hooks to be version controlled and deployable, track them in your repository and create symbolic links to them.
+T>
+T> You could put a `hooks/post-update-staging` in your repository for dealing with a push to your staging environment. Then on your staging server, create a symbolic link to the hook with: `ln -s hooks/post-update-staging .git/hooks/post-update`.
+
+### Language agnostic
+
+One of the best features about git hooks is that they are language agnostic. If your shell can run the language, your hook can use that language.
+
+If you want to use Bash in your hooks, you can do that:
+
+{lang=bash}
+~~~
+#!/bin/bash 
+echo "Hello World!"  
+~~~
+
+Or if you prefer Python, use that:
+
+{lang=python}
+~~~
+#!/bin/python
+print "Hello world"  
+~~~
+
+Or why not PHP? You're probably familiar with this language.
+
+{lang=php}
+~~~
+#!/bin/php
+echo "Hello world"; 
+~~~
+
+And so on. This makes the hooks extremely versatile since you can write them in the language you are most comfortable in. However, you can also choose to write them to be able to run anywhere. So using Bash, for example, makes it run pretty much anywhere (except for Windows, but you can probably get that to work also).
+
+I will use Bash in my examples. I prefer it since I know it will run almost anywhere. 
+
+### Environment variables
+
+Some of the hooks will have access to environment variables. But these are specific for each hook though, and in some cases the same variable can differ in settings from hook to hook. They can also be different depending on which version of git you're running. This is a bit inconsistent and can be confusing sometimes. But don't worry, if you're aware of them you can work around them pretty well. All environment variables can be found [here](http://git-scm.com/book/en/v2/Git-Internals-Environment-Variables) in the official documentation. Please note that not all variables are available everywhere.
+
+Let's take the example of the environment variable `GIT_DIR`. This one is usually set to `.git`. This is true for the hooks *pre-commit*, *prepare-commit-msg*, *commit-msg*, *post-checkout* and *post-commit* for example. But then when you get to the hooks like *pre-receive*, *update*, *post-receive* and *post-update*, it's all of a sudden set to `.`. To me this is a very strange behaviour, but I assume there is a reason behind it, or at least I hope so. To make things even more complicated, it's not even set when running hooks like *applypatch-msg*, *post-applypatch* and *pre-applypatch*.
+
+Knowing the environment variables and how they behave is not essential. It's sufficient to know that they are there, how you can work with them and try to achieve consistency. One thing I usually do is when I work the hooks *pre-receive* and *post-update* is that I just unset it to achieve consistency. This can be done by a simple
+
+{lang=bash}
+~~~
+unset GIT_DIR
+~~~
+
+Now if I make it work with the environment variable unset, I know that it should behave as intended across different environments. 
+
+### Automated builds
+
+Now I want to show you an example of how we can set up a remote (an environment we can deploy to) to receive pushes from your local environment and proceed to make an automated build. It's actually really simple. We will leverage the **pre-receive** and **post-update** hooks for this.
+
+#### Set up the environments
+
+On your local environment, the application will be located in
+
+    ~/dev/app
+
+And on your remote it will be located in 
+
+    /var/www/app.git
+    
+The paths are arbitrary, I will just use these in my examples.
+
+First of all we will set up the remote. This is done by logging in on your server through a shell and executing the following
+
+    mkdir -p /var/www/app.git  
+    cd /var/www/app.git  
+    git init 
+    
+Now you have an empty repository in place for your application on your remote. 
+
+Then we create a repository in our local environment and add the remote there so we can push to it.
+
+    mkdir -p ~/dev/app  
+    cd ~/dev/app  
+    git init
+    git remote add production <user>@<yourhost>:/var/www/app.git/
+    
+Voila! That's all we had to do.  This could of course be done with an existing repository but then we just skip creating the directory and initializing a repository. Instead we only run the last command inside our current repository. Note that the remote is named *production*, if we we're setting up a staging or development environment we would name it accordingly. It could also be the name of the host or any other name that you like. 
+
+If we commit something now in our local environment we can push it to our remote by running
+
+    git push production master
+
+
+#### Set up the hooks
+
+We're now able to push commits to our remote server. But it does not do us any good in terms of automation yet. So, now we will set up the hooks necessary to start automating builds when we push. **All of this is done on the remote, not in your local environment**.
+
+First of all we create the hook for *post-receive*. It's responsibility will be to move `HEAD` pointer to the latest commit. Since a push will result in pushing all the refs, but the pointers won't be updated.
+
+{lang=bash}
+~~~
+cd /var/www/app.git  
+touch .git/hooks/post-receive  
+chmod +x .git/hooks/post-receive  
+~~~
+
+Now it exists and is executable. Let's add all the commands that will update the repository.
+
+{lang=bash}
+<<(../code/chapter-5/post-receive)
+
+As I mentioned earlier, it changes the current working directory and unsets the `GIT_DIR` environment variable for consistency. Then it does a hard reset of the repository and forces a checkout of the latest commit. This ensures that our other hook will have the correct state to work with.
+
+Now we need to make the actual build. This will be handled by a *post-update* hook since that runs when all refs have been updated. First we create it and make it executable, just as we did with the *post-receive* hook.
+
+{lang=bash}
+~~~
+cd /var/www/app.git  
+touch .git/hooks/post-update  
+chmod +x .git/hooks/post-update  
+~~~
+
+Now we can add all the commands we need to run. These commands will be arbitrary and you will have to add all the build steps necessary for your own application. I will just add a simple `composer update` for updating dependencies.
+
+{lang=bash}
+~~~
+#!/bin/bash
+cd ..  
+unset GIT_DIR 
+
+composer update
+~~~
+
+And there we have it!
+
+
+### Atomic deploys
+
+Making atomic deploys with git hooks is not a very complicated matter actually. We just need a good template to work with and add some scripting logic to it. Take a look at the previous chapter on atomic deploys since we'll used the [proposed folder structure](#atomic-folder-structure) in this example.
+
+#### The hooks
+
+There is a few steps we will go over here to make this all glue together. We'll start by creating a *post-receive* hook again:
+
+{lang=bash}
+~~~
+cd /var/www/app.git/repository  
+touch .git/hooks/post-receive  
+chmod +x .git/hooks/post-receive  
+~~~
+
+And adding the necessary commands for updating the repository on a push:
+
+{lang=bash}
+<<(../code/chapter-5/post-receive)
+
+And we create the *post-update* hook:
+
+{lang=bash}
+~~~
+cd /var/www/app.git/repository 
+touch .git/hooks/post-update  
+chmod +x .git/hooks/post-update  
+~~~
+
+And add a simple start to it:
+
+{lang=bash}
+~~~
+#!/bin/bash
+cd ..
+unset GIT_DIR
+~~~
+
+So all of this is exactly what we did in the previous example, the only difference is that we created the hooks in  `/var/www/app.git/repository` instead of `/var/www/app.git`. This also means that we have a different folder to push to, and the command for adding the remote in your local environment is slightly different
+
+    git remote add production <user>@<yourhost>:/var/www/app.git/repository/
+    
+If you want to change a current remote instead of adding it you can do this in `.git/config` on your local environment. Just use your text editor of choice and open it, then find this section and change the line accordingly:
+
+~~~
+[remote "production"]
+leanpub-start-delete
+url = <user>@<yourhost>:/var/www/app.git/
+leanpub-end-delete
+leanpub-start-insert
+url = <user>@<yourhost>:/var/www/app.git/repository
+leanpub-end-insert
+fetch = +refs/heads/*:refs/remotes/production/*
+~~~
+
+Now we can push to the correct location and trigger the hooks when we push. So let's start taking the steps of making the deploy atomic. All of this goes into the *post-update* hook.
+
+We need to be aware of the different paths that we have set up so we can perform things based on that. So we create a few variables for dealing with that. Then we also save the date in a variable for creating folder names.
+
+{lang=bash,crop-start-line=5,crop-end-line=12}
+<<(../code/chapter-5/post-update)
+
+After all this, we can add the command for updating our dependencies. Any command can be added here that you need for building your application, but we will stick with this simple example for now:
+
+{lang=bash,crop-start-line=14,crop-end-line=15}
+<<(../code/chapter-5/post-update)
+
+Now we should remove any shared folders inside our application and replace them with symbolic links to the *shared* folder. Let's assume this is a Laravel application and we need to keep `app/storage` persistent through builds.
+
+{lang=bash,crop-start-line=17,crop-end-line=19}
+<<(../code/chapter-5/post-update)
+
+Now we have our complete build that we should copy to `builds/` and create or change the `latest/` symbolic link to point to it.
+
+{lang=bash,crop-start-line=21,crop-end-line=25}
+<<(../code/chapter-5/post-update)
+
+And finally we do some clean up, you only want to keep your latest 5 builds.
+
+{lang=bash,crop-start-line=27,crop-end-line=29}
+<<(../code/chapter-5/post-update)
+
+Congratulations, you now have a fully functional atomic deploy!
+
+I will end by showing you the complete *post-update* hook here and what it looks like:
+
+{lang=bash}
+<<(../code/chapter-5/post-update)
+
+W> ### More or fewer than 5 builds?
+W>
+W> We are using `rm -rf $(ls -1t | tail -n +6)` in this example. This will save the 5 latest builds, but perhaps you want another number. Notice **+6** in the command, change that to *(N+1)* builds. So if you want to save 10 builds, you change **+6** in the command to **+11**.
+
+It's a simple example but it serves well as a boilerplate set up for atomic deploys.
+
+### Output and logs
+
+If you have tried any of the examples, you noticed a wonderful thing. The remote will send back the output of the running hook to you when doing a push. This allows for you to follow along with exactly what is happening in the push.
+
+What I tend to prefer is to save all the output to a log file as well, having a deploy log is great for debugging purposes. This is how you in a very easy way can add logging for your hooks, just add it to the top of your hook:
+
+{lang=bash}
+~~~
+NOW=$(date +"%Y%m%d-%H%M%S")
+deploy_log="/var/logs/deploy/deploy-$NOW.log"
+touch $deploy_log
+exec > >(tee $deploy_log)
+exec 2>&1
+~~~
+
+Just make sure that `/var/logs/deploy` exists and you have write permissions to it. Then it will create a log file with a date in the name for each time the hook runs.
+
+### Pros and cons
+
+The good parts are:
+
+* Simplicity (mostly)
+* Integrates with git
+* Automate things in your local environment
+* Language agnostic
+* Arbitrary commands
+
+The less good parts are:
+
+* Need to be created on each remote
+* Pushing asynchronously is tricky
+* Can be very complicated when scratching below the surface
+
+{pagebreak}
+
+## Phing
+
+This tool has been around for a very long time, according to their changelog the initial pre-release was in October 2002. Which is an eon in internet time. You can find it on [its website](http://www.phing.info/). It's based on Apache's [Ant](http://ant.apache.org/) tool which is a build tool built in Java. You can probably already tell that since it's very old and based on a Java tool that it's not cutting edge. The strength is that it has been around for a very long time and with that comes stability and maturity. Actually the "preferred method" of installation is through PEAR according to their official documentation, and that's not a good sign. But it can be installed through Composer as well, which it should be and the documentation cover this.
+
+### Installation
+
+I would suggest that you install it through Composer. You can do this by either running (replace composer with how you access your composer binary)
+
+    composer require "phing/phing:2.*" 
+    
+ or adding
+
+    "phing/phing": "2.*"
+
+to your required dependencies in `composer.json` and running `composer update`. Sweet and simple as that. You now have your `phing` binary in the directory `vendor/bin/`, which I suggest you to always have in your path.
+
+However there might be reasons for you not being able to install it through Composer. In this very unlikely event you can download the [Phar archive](http://www.phing.info/get/phing-latest.phar) and put it in the root of your repository. You can then use this to run Phing with `php phing-latest.phar`.
+
+Either way is fine, but just make sure you stay away from the PEAR package.
+
+### Build files
+
+It uses build files that are written in XML which is a format developers have been shying away from for a while. It does not make the tool better or worse, it's just the way it's done. This is because Ant uses XML build files and therefore Phing does it that way too. If you do not specify a build file when running Phing, it will try to find the file `build.xml`. Because of this it's always the easiest to name your build file that, unless you have very advanced needs for multiple build files or you can't name it that for some reason.
+
+A valid build file must contain a few elements. First of all it must contain only one root element called `<project>` and everything in your build file goes inside this element. Then it must contain several *type* elements such as `<property>`, `<fileset>`, `<patternset>`, etc. And it also must contain one or more `<target>` elements.
+
+Start by creating the file `build.xml` and adding a appropriate XML header:
+
+{lang=xml}
+~~~
+<?xml version="1.0" encoding="UTF-8"?>
+~~~
+
+#### Project
+
+All build files **must** contain this element and there can only be one. And it must be the root for your build file. It accepts a few attributes you can put on it:
+
+| Required | Attribute   | Description |
+| -------- | ----------- | ----------- |
+| Yes      | default     | This is not optional and must exist. This is where you specify the default *target* to run when no targets are explicitly provided.
+| No       | name        | The name of your project, name it what you want.
+| No       | basedir     | The base directory of your project. Use "." for using the current directory. When it doubt, use "." as your base directory.
+| No       | description | The description of your project, describe it how you want
+
+So now let's add a *project* element to your build file
+
+{lang=xml}
+~~~
+<project name="my-app" basedir="." default="dist">
+    <!-- The rest of your deploy stuff will go in here -->
+</project>
+~~~
+
+#### Targets
+
+There can be one or many target elements, and they can depend on each other. This is great for preparing certain scenarios. Example: Let's say that you want to dump your database and move the dump somewhere, then you would make a target for dumping the database and a target for moving the dump that depends on the target for dumping.
+
+{lang=xml}
+<<(../code/chapter-5/targets.xml)
+
+If you would run `phing` now nothing would really happen since we only have comments in the targets, but you should get a output showing that the build file was used and the targets where executed in the right order. Notice that we receive a waning that our target has no tasks or dependencies though:
+
+~~~
+Buildfile: /path/to/my-app/build.xml
+Warning: target 'dump-database' has no tasks or dependencies
+
+my-app > dump-database:
+
+my-app > move-database-dump:
+
+my-app > dist:
+
+BUILD FINISHED
+
+Total time: 0.1998 seconds
+~~~
+
+There are a few attributes that can be assigned to *target* elements too:
+
+| Required | Attribute   | Description |
+| -------- | ----------- | ----------- |
+| Yes      | name        | The name of the target
+| No       | depends     | Specify target dependencies in a comma-separated fashion
+| No       | if          | A *Property* that must be set for the target to be executed
+| No       | unless      | A *Property* that must not be set for the target to be executed
+
+#### Tasks
+
+This is where it gets interesting. The official documentation have this to say on what a *task* is:
+
+> A *task* is a piece of PHP code that can be executed
+
+Which is really cool. This means that we can define tasks in our build that is executing PHP code. Let's stop for a second here and take a step back to look at what this offers us. First of all this allows us to **integrate our application with our deploy**. We could write build tasks in our application under a certain namespace, with this we get a deep integration where we could achieve really cool stuff. Whether it be busting caches through our actual application or building static assets with your favorite Composer package for that. Second of all, it allows us to **write tests for our build**. We could write tests that cover the entire build!
+
+I digress a bit from the tool at hand, so let's go back to tasks. The way tasks are defined differs a bit from the other elements. Where others have a fixed element name (*\<project /\>* and *\<target /\>*), tasks are a bit more dynamic. The element will instead be defined based on the name of the task. If we have a task that will clear our application cache, it might perhaps be defined as `<clear-application-cache />`. Phing provides you with a good amount of core tasks you can used and then you are free to create your own ones. Let's create a simple greet-task using the *AdhocTaskdefTask* provided by Phing for creating our own tasks inside the build file.
+
+When defining a custom task, we need to create a class that extends `Task`. We can then define attributes to be passed in and create setters for them. In the example below we will use a *recipient* attribute to tell our task who we want to greet:
+
+{lang=xml}
+<<(../code/chapter-5/tasks.xml)
+
+We can now execute this with `phing greet` and we should see a proper output for it:
+
+~~~
+my-app > greet:
+
+    [greet] Hello World!
+
+BUILD FINISHED
+
+Total time: 0.0451 seconds
+~~~
+
+I> ### CDATA in adhoc-tasks
+I>
+I> We should use *<![CDATA[ ... ]]>* so we don't have to quote entities within the task.
+
+#### Properties
+
+We have to option to define property elements in our build file which later can be referenced, you could see them as variables. These can be defined and we can tell them through an attribute that we want the option to be able to override them. If we say that we're allowed to override a property, then we can specify the property value through the command line when running Phing.
+
+If we go back to our example of greeting someone in the build, we can get a good demonstration of properties at work. First we define a property of whom we want to greet, this is done inside the *project* element.
+
+{lang=xml}
+~~~
+<property name="recipient" value="World" override="true" />
+~~~
+
+So we say that by default we want to greet "World", but this also give us the option to override this if we want to. Now we need to change our *task* to use this property. When referencing properties within the build file you use `${property-name}`. So in our case we have to reference `${recipient}`.
+
+{lang=xml}
+~~~
+<greet recipient="${recipient}"/>
+~~~
+
+Now we can call the target and optionally change whom we want to greet. To override properties we use the `-D` option for the command line runner:
+
+~~~
+$ phing greet
+
+my-app > greet:
+
+    [greet] Hello World!
+    
+---
+
+$ phing greet -Drecipient=Niklas
+
+my-app > greet:
+
+    [greet] Hello Niklas!
+~~~
+
+### Automated builds
+
+Again, let's take a real world example of a simple application that install its dependencies with Composer. One down side to Phing is that you have to execute the command on the server in order for it to run the build. However, if you follow the examples for git hooks you can easily make a git hook run Phing when you push to your remote.
+
+We will assume that we have a super simple application that looks like this:
+
+~~~
+├── composer.json
+├── composer.lock
+├── index.php
+└── vendor/ 
+~~~
+
+What do we need to achieve in deploying this application? It's as simple as running a `composer update`. But for the sake of our example we want to remove the `vendor/` folder on each deploy to do a clean install of dependencies. This allows us to use the things we learned previously.
+
+Now we need a build file for Phing. We start creating `build.xml` and declaring the basic parts of it.
+
+{lang=xml}
+~~~
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="app" basedir="." default="dist">
+    <!-- The rest of will go in here -->
+</project>
+~~~
+
+This is the basic XML declaration, a project element and a default target to run. We do not have that target yet so we can't run it yet. We said we wanted to do a clean install of our dependencies on each deploy, so let's create a target for preparing that state.
+
+{lang=xml}
+~~~
+<target name="prepare" description="Delete dependencies">
+    <delete dir="vendor"/>
+</target>
+~~~
+
+And let's also create the default target *dist* that depends on the *prepare* target.
+
+{lang=xml}
+~~~
+<target name="dist" depends="prepare" />
+~~~
+
+If you now run `phing` you should see in the output that it runs *prepare* first and then *dist*, resulting in that the vendor folder is removed (if it existed).
+
+What we now need to do is have a target that handles installing the dependencies through composer. We run composer through the exec task, you can find more on this in the Phing's documentation on [ExecTask](http://www.phing.info/docs/stable/hlhtml/index.html#ExecTask). This can be used to execute any arbitrary command.
+
+{lang=xml}
+~~~
+<target name="composer-install" description="Install dependencies">
+    <exec executable="composer" checkreturn="true">
+        <arg line="install"/>
+    </exec>
+</target>
+~~~
+
+And we also update the *dist* target to depend on this.
+
+{lang=xml}
+~~~
+<target name="dist" depends="prepare,composer-install" />
+~~~
+
+If we now run `phing` it will execute the *dist* target. That target have two dependencies, the *prepare* target and the *composer-install* target. They will run one after another, reassuring that the vendor folder is removed before it will run `composer install`.
+
+### Atomic builds
+
+Making the deploy process atomic is a great way of explaining the parts of Phing. In this we rely on our process being in certain states before continuing with other steps. Again we'll use the [proposed folder structure](#atomic-folder-structure) in this example.
+
+And again we'll start by creating our basic `build.xml` file
+
+{lang=xml}
+~~~
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="app" basedir="." default="dist">
+    <!-- The rest of will go in here -->
+</project>
+~~~
+
+We can think of targets as certain states we need our process to be in before proceeding. The steps we can identify for the atomic build is:
+
+* Create build
+* Copy build
+* Link shared data
+* Update link to latest build
+* Clean old builds
+
+Each and one of these will have a target and we want them to be done in a synchronous manner because they always depend on the previous targets' state. Creating a build in this context will be just updating the dependencies in our *repository/* folder.
+
+{lang=xml,crop-start-line=5,crop-end-line=9}
+<<(../code/chapter-5/buildfile.xml)
+
+After that we want to copy our build to the *builds* folder. We'll use the convention of named our build with the current timestamp for easier reference, so we'll create a property called *TSTAMP* that we can use to copy and reference our build from. Phing has a [TstampTask](https://www.phing.info/docs/guide/trunk/TstampTask.html) we'll use.
+
+{lang=xml,crop-start-line=11,crop-end-line=19}
+<<(../code/chapter-5/buildfile.xml)
+
+So now we want to link our shared data in the build. Again we assume that we store persisted data in `app/storage` inside the application, and have a `shared/storage` folder for that. Lucky for us, there's a task in Phing called [SymlinkTask](https://www.phing.info/docs/guide/trunk/SymlinkTask.html) that we can use.
+
+{lang=xml,crop-start-line=21,crop-end-line=23}
+<<(../code/chapter-5/buildfile.xml)
+
+This leaves us with a complete build of the application with shared data prepared. All we need to do now is to serve it to the users. That's just a matter of updating the symlink *latest* that the web server has as document root.
+
+{lang=xml,crop-start-line=25,crop-end-line=27}
+<<(../code/chapter-5/buildfile.xml)
+
+We only have a final step to complete now. To not save infinite number of builds, it's time for some cleanup. We'll use the same bash command as we did for the git hook atomic deploy and put it inside Phing.
+
+{lang=xml,crop-start-line=29,crop-end-line=31}
+<<(../code/chapter-5/buildfile.xml)
+
+T> ### More or fewer than 5 builds?
+T>
+T> We are using `rm -rf $(ls -1t | tail -n +6)` in this example. This will save the 5 latest builds, but perhaps you want another number. Notice **+6** in the command, change that to *(N+1)* builds. So if you want to save 10 builds, you change **+6** in the command to **+11**.
+
+All steps, as targets, necessary are in place to make an atomic build now. We just have to put them all together in order. The default target in our build file is *dist*, so we create that and append all targets as dependencies to it. Here is the build file in its entirety.
+
+{lang=xml}
+<<(../code/chapter-5/buildfile.xml)
+
+All that is left is to run the Phing binary.
+
+### Pros and cons
+
+The good parts are:
+
+* Tested and stable
+* Abundance of predefined tasks
+* Create your own tasks in PHP
+* Dependencies between targets
+
+The less good parts are:
+
+* Written in Java
+* Build files are written in XML
+
+{pagebreak}
+
+## Capistrano
+
+In their own words, Capistrano is a *Remote multi-server automation tool* and it is written in Ruby. That it is written in Ruby can be somewhat of an annoyance if you're not familiar with it, but with its great documentation and your Google skills you shouldn't have a hard time using it at all. 
+
+It started out as a tool for deploying Ruby applications, but has since then grown and can be used for deploying applications written in pretty much any language. Today they have official PHP specific plugins for Composer, Laravel and Symfony. Another great feature about it is that it will always perform atomic deploys. [My suggested folder structure](#atomic-folder-structure) for atomic deploys and [their folder structure](http://capistranorb.com/documentation/getting-started/structure/) is almost identical on the server side. It also provides a good structure for your deploy tasks and configuration in your repository.
+
+I> ### Web server document root
+I>
+I> Since Capistrano uses **current** as a symbolic link to the current deploy, we need our web server to use that as the document root.
+
+How it works is that you add your environments and servers in the configuration files for Capistrano, then you add tasks that should be performed on these different environments and server. After that you can easily execute the tasks remotely over safe and secure SSH connections. This was you can manage your deploy process from your own familiar command line on your computer.
+
+You could also use it as a basic way of performing tasks on your servers that are not deploy related, since you can execute arbitrary commands over SSH on multiple servers at the same time. Want to get the memory usage on all your database production servers? Add a task to do this and capture the output from all your servers in one go. However this is not a book on infrastructure orchestration or provisioning, so we'll focus on deploying your PHP application with it.
+
+At the time of writing this, Capistrano is at version 3.
+
+### Installation
+
+It's bundled as a Ruby gem which means you need a Ruby environment to run it (version 1.9.3 or later). How you install Ruby is up to you and varies for different operating systems; I suggest starting a [Ruby's web page](https://www.ruby-lang.org/en/) for instructions on how to install it on your system. After you have a Ruby environment, installation is as easy as `gem install capistrano`.
+
+Then you can initialize it in your application
+
+    cd ~/dev/app
+    cap install
+    
+And you will now have a structure like this in your application
+
+~~~
+├── Capfile
+├── config
+│   ├── deploy
+│   │   ├── production.rb
+│   │   └── staging.rb
+│   └── deploy.rb
+└── lib
+    └── capistrano
+            └── tasks 
+~~~
+
+As you can see, by default it sets up a structure you could easily extend. It adds staging and production as environments since they are the most common ones, but nothing will stop you from setting up more environments if needed. A bunch of boilerplate configuration is provided for you in the configuration files. Most of it is commented out but it gives you a good overview of what is possible and how you can achieve certain things. Some parts are non-optional and we will go through them to make you application deployable.
+
+### Global configuration
+
+You can find the global configuration in `config/deploy.rb` and this is where you want to start. For now we set the application name and the remote repository.
+
+{lang=ruby}
+~~~
+leanpub-start-delete
+set :application, 'my_app_name'
+set :repo_url, 'git@example.com:me/my_repo.git'
+leanpub-end-delete
+leanpub-start-insert
+set :application, 'my-app'
+set :repo_url, 'https://github.com/modess/deploy-test-application.git'
+leanpub-end-insert
+~~~
+
+Capistrano now knows what our application is called and where to locate the remote repository. The remote repository is where is will pull code from when deploying. We'll also change the path of where to deploy it, and we'll stick to our regular path for examples: `/var/www/app`.
+
+{lang="ruby"}
+~~~
+leanpub-start-delete
+# set :deploy_to, '/var/www/my_app_name'
+leanpub-end-delete
+leanpub-start-insert
+# set :deploy_to, '/var/www/app'
+leanpub-end-insert
+~~~
+
+This is all we'll do for our global configuration now.
+
+T> ### Separate your application and deploy process
+T>
+T> Noticed that we specify a remote repository for our deploys? This means we can have separate repositories for our application and our deploy process. Separating concerns is usually a good thing, keeping things nice and tidy.
+
+### Server configuration
+
+Now it needs to know where it should deploy to, and that is a server. We will not care for a staging environment at this point so we'll only focus on the production environment. In the file `config/deploy/production.rb` we can configure that.
+
+{lang=ruby}
+~~~
+leanpub-start-delete
+# server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
+leanpub-end-delete
+leanpub-start-insert
+server 'my-app.com', user: 'niklas', roles: %w{app}
+leanpub-end-insert
+~~~
+
+This is a very simple setup, we've specified that our production server is *my-app.com*, I want to deploy as the user *niklas* and the role for this server is *app*. You would change the user you want to deploy as and don't mind the role part for now.
+
+We can actually deploy the application now by running `cap production deploy`, however the application will not work since we haven't installed our dependencies.
+
+### Installing dependencies
+
+A plugin for Composer is provided as an official plugin for Capistrano. It's also provided as a gem, so first we install it on our system with
+
+~~~
+gem install capistrano-composer
+~~~
+
+And then we need to add a simple line in `Capfile` for requiring it
+
+{lang=ruby}
+~~~
+require 'capistrano/composer'
+~~~
+
+You know what the best part of this is? Capistrano will now always run a Composer install for our deploys. If you run `cap production deploy` now you should be able to see the command and its flags in the output:
+
+~~~
+[...]
+INFO [c8e8e7be] Running /usr/bin/env composer install --no-dev --prefer-dist --no-interaction --quiet --optimize-autoloader as niklas@my-app.com
+[...]
+~~~
+
+### File permissions
+
+Either your application is working now or it is crashing due to the fact that it's not allowed to write to the `storage/` directory in the application. We start by installing the file permission plugin for Capistrano on our system
+
+    gem install capistrano-file-permissions
+    
+We then require it in our `Capfile` and use it to set proper permissions
+
+{lang=ruby}
+~~~
+require 'capistrano/file-permissions'
+~~~
+
+And finally we add the path, user and running the file permissions in our deploy workflow. This we do in our global configuration file `config/deploy.rb`:
+
+{lang=ruby}
+~~~
+set :file_permissions_paths, ["storage"]
+before "deploy:updated", "deploy:set_permissions:acl"
+~~~
+
+It will now set the correct file permission for our storage folder on each deploy.
+
+### Shared data
+
+We still have one thing we need to fix for our deploy, and that is shared data. Every time we deploy we will get a new life span for the application, since we save the first run to a file in our application located at `storage/first_deploy`. We need this to persist between our deploys. Luckily for us, Capistrano provides a way for shared folders and files.
+
+We move back to our global configuration file `config/deploy.rb` and find the line where `linked_dirs` is commented out and change it to an appropriate value for our application.
+
+{lang=ruby}
+~~~
+leanpub-start-delete
+# set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
+leanpub-end-delete
+leanpub-start-insert
+set :linked_dirs, fetch(:linked_dirs, []).push('storage')
+leanpub-end-insert
+~~~
+
+Now we can deploy as many times as we want, but the application life span is never changed due to the fact that our storage folder is persisted between all deploys.
+
+### Pros and cons
+
+The good parts are:
+
+* Atomic deploys by design
+* Structural overview of your deploy
+* Separate your deploy process from your code
+* Plugins
+
+The less good parts are:
+
+* Ruby based, so you need an environment for that
+
+{pagebreak}
+
+## Rocketeer
+
+If you want a tool that is tightly integrated with PHP, fast, modern and easy to use, this could be the tool you're looking for. It has taken many proven concepts from predecessors and made it into a tool worthy of modern development and deployment. It is coded in PHP but it can manage deploying any type of application. It provides a powerful set of features that is probably enough for many applications, but it is also based on a modular approach that enables you to swap, extend or hack parts to fit your particular need if necessary.
+
+It has a very interesting philosophy while being heavy influenced and dependant on the Laravel framework, it has many `illuminate/*` dependencies which is core Laravel packages. Through this it's able to leverage a lot of power for configuration, events, remote execution, cli among other things. There is also a focus on readability and simplicity for the API it provides.
+
+Just as Capistrano this tools treats deploys atomically and has an almost identical folder structure at the remote deploy locations. While we have to mimic this functionality manually with git hooks or Phing, we don't have to worry about it here. Other than it allows us to manage things in multiples; multiple servers, multiserver connections and multiple stages per server.
+
+
+### Installation
+
+There are two good ways of installing the tool, either downloading the *phar* or installing it through Composer. I'm always a fan of using Composer so I would recommend installing it that way:
+
+~~~
+composer require anahkiasen/rocketeer --dev
+~~~
+
+You will then have the rocketeer binary at. `vendor/bin/rocketeer`. The other way is downloading the *phar* and using that instead:
+
+{lang=bash}
+~~~
+wget http://rocketeer.autopergamene.eu/versions/rocketeer.phar
+chmod +x rocketeer.phar
+~~~
+
+When running commands, I will simply refer to the binary as `rocketeer`, but you will probably either run `php vendor/bin/rocketeer` or `php rocketeer.phar` depending on how you installed Rocketeer. With the binary in place we can setup our project by running the command 
+
+~~~
+rocketeer ignite
+~~~
+
+You will be asked a bunch of questions for the setup process, they are all straightforward and you always have the option to edit them later on. After this, Rocketeer will generate all the files necessary for it to work under the `.rocketeer` folder.
+
+~~~
+└── myapp/
+    └── .rocketeer/
+        ├── config.php 
+        ├── hooks.php
+        ├── paths.php
+        ├── remote.php
+        ├── scm.php
+        ├── stages.php
+        └── strategies.php 
+~~~
+
+### Configuring
+
+We will configure our application just the way we set up and deployed using Capistrano. We'll start by configuring where our application should reside and be deployed to on our server. We find this in `remote.php` where we make our changes.
+
+{lang="php"}
+~~~
+// The root directory where your applications will be deployed
+// This path *needs* to start at the root, ie. start with a /
+leanpub-start-delete
+'root_directory' => '/home/www/',
+leanpub-end-delete
+leanpub-start-insert
+'root_directory' => '/var/www/',
+leanpub-end-insert
+
+// The folder the application will be cloned in
+// Leave empty to use `application_name` as your folder name
+leanpub-start-delete
+'app_directory'  => '',
+leanpub-end-delete
+leanpub-start-insert
+'app_directory'  => 'myapp',
+leanpub-end-insert
+~~~
+
+In our previous examples we've saved five previous deployed versions of our application as well. The default setting in Rocketeer is to save four, so let's change that also:
+
+{lang="php"}
+~~~    
+// The number of releases to keep at all times
+leanpub-start-delete
+'keep_releases'  => 4,
+leanpub-end-delete
+leanpub-start-insert
+'keep_releases'  => 5,
+leanpub-end-insert
+~~~
+
+One last thing to do in this file and that is making sure our shared storage directory is persisted between deploys. 
+
+{lang="php"}
+~~~
+// A list of folders/file to be shared between releases
+// Use this to list folders that need to keep their state, like
+// user uploaded data, file-based databases, etc.
+'shared'         => [
+leanpub-start-delete
+    'storage/logs',
+    'storage/sessions',
+leanpub-end-delete
+leanpub-start-insert
+    'storage',
+leanpub-end-insert
+],
+~~~
+
+And let us update the writable directories/files so we don't receive errors for trying to set permissions to things that don't exist
+
+{lang="php"}
+~~~
+// Permissions$
+////////////////////////////////////////////////////////////////////
+
+'permissions'    => [
+
+    // The folders and files to set as web writable
+    'files'    => [
+leanpub-start-delete
+        'app/database/production.sqlite',
+leanpub-end-delete
+        'storage',
+leanpub-start-delete
+        'public',
+leanpub-end-delete
+    ],
+    
+// [...]
+~~~
+
+Now we can deploy our application, just run:
+
+~~~
+rocketeer deploy
+~~~
+
+Our application is now deployed, but there are some more concepts that Rocketeer provides that we should go through so we won't really settle here.
+
+### Tasks
+
+For the example application, we actually have a full fledged deploy process. But there is a core concept in Rocketeer I want to discuss anyway because it's central to how the tool work, this is **tasks**. It's a term they've chosen to use and they are used for executing steps inside your deploy process. They can be either one line commands such as `composer install`, or they can be closures that allows for you to write an inline style of task, or they can be separate classes. Most of the predefined features you're presented with is tasks written for the core.
+
+This allows us to easily extend or write new functionality to our deploy process that we can hook into at the points we want in the process, tailoring it for our applications needs. If you're more interested in how the event system works and what hooks are available, read more about it in the [events documentation](http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Events). And if you're more interested in tasks and what you are able to do with them you should read the [tasks documentation](http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Tasks).
+
+Unfortunately as I said before is that Rocketeer has managed all our needs for the deploy. So what we could do is create a simple task that runs just after our deploy and display a one liner of the latest commit made to the repository. We'll do this by adding a closure that hooks into `deploy.after` and just runs a git commands, catches the output and prints it to our console. We do this in `.rocketeer/hooks.php`.
+
+{lang="php"}
+~~~
+    // Tasks to execute after the core Rocketeer Tasks
+    'after'  => [
+        'setup'   => [],
+        leanpub-start-delete
+        'deploy'  => [],
+        leanpub-end-delete
+        leanpub-start-insert
+        'deploy'  => [
+          function($task) {
+            $task->command->info('Latest commit for the repository:');
+            $task->runForCurrentRelease('git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n1');
+          }
+        ],
+        leanpub-end-insert
+        'cleanup' => [],
+    ],
+
+~~~
+
+Now if we run `rocketeer deploy` we see something similar in the output just before the cleanup process starts:
+
+~~~
+Repository is currently at:
+$ cd /var/www/myapp/releases/20150717121012
+$ git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n1
+[niklas@my-app.com] (production) 551936f (grafted, HEAD, origin/master, origin/HEAD, master) sexier frontend and with persistant storage
+~~~
+
+### Pros and cons
+
+The good parts are pretty similar to Capistrano, but with a few added benefits:
+
+* Atomic deploys by design
+* Structural overview of your deploy
+* Separate your deploy process from your code
+* Modular
+* Plugins
+
+The less good parts are:
+
+* No obvious ones really if you're a PHP developer

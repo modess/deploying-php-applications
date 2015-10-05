@@ -1,0 +1,13 @@
+<project name="my-app" basedir="." default="dist">
+    <target name="dist" depends="move-database-dump">
+        <!-- Dump database -->
+    </target>
+
+    <target name="dump-database">
+        <!-- Dump database -->
+    </target>
+    
+    <target name="move-database-dump" depends="dump-database">
+        <!-- Move the database dump -->
+    </target>
+</project>

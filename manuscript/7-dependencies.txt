@@ -1,0 +1,196 @@
+# 7. Dependencies
+
+The day has long passed since dependencies in a PHP application was not managed by one or more package managers. Composer made it easy for people to share their packages with the world and let other people to use them, and also contribute to them. It has in a way brought the members of the PHP community closer together. One might of course ask the question on why dependencies is even brought up in a book about deploying applications. The answer is that managing, updating and installing dependencies in a consistent way so they stay synchronized between all environments can sometimes be tricky. 
+
+Any modern application have (or at least should have) some dependencies. This does not have to be PHP specific, usually it's a mix of dependencies from one or more dependency management tools. The most popular being Composer, Node Package Manager (NPM) and Bower. I probably don't have to tell you about Composer, it's the de-facto standard for PHP packages your application depend on. NPM is a versatile tool that can be used to install dependencies for tools and both frontend and backend packages. Since *node.js* can be used for both server and client side code, its package manager reflects this. And it's often used for build tools and their dependencies, such as *grunt* or *gulp*. Then there is also Bower which is great at handling dependencies for the frontend, pretty much any assets you can think of can be managed with it.
+
+In this chapter I will not describe how to use these tools; instead I'm going to discuss what they have in common. What they have in common is the way we specify versions for our dependencies, why that is and how we effectively can manage our dependencies when understanding this. They all follow a standard called **semantic versioning**.
+
+## Semantic Versioning
+
+One day Tom Preston-Werner, one of the co-founders of github, decided it was time for a proposal on how software versioning should be done. The result was [Semantic Versioning](http://semver.org/) and it has since been widely adopted by developers and tools. Understanding the principles of semantic versioning will make your life managing dependencies easier. The ongoing development is of course [available on github](https://github.com/mojombo/semver).
+
+### Specification
+
+The foundation is extremely simple, a version consists of three parts. The *MAJOR*, *MINOR* and *PATCH* parts, and they **must** exists on all versions. The format of this is `X.Y.Z` in the order I previously stated, this is how I will continue to mention them. `X` for a major version, `Y` for a minor version and `Z` for a patch. If a version is missing any of these parts, it can not be considered to adhere to semantic versioning. I will sometimes write certain parts in lower case, when I do this it's to highlight something of importance for one of the other parts which will be in upper case.
+
+For a quick example: a major release could be `1.0.0`, when a minor version is released it will become `1.1.0`, and if it is patched it will become `1.1.1`. The version can also be suffixed with `-dev`, `-patch`, `-alpha` or `-beta`, such as `1.0.0-RC1`, but I will not go deeper in how the version constraints deal with these edge cases.
+
+The list of how versioning must be applied to comply with semantic versioning is long, but the interesting parts are:
+
+* Once a version has been released, it must not change under any circumstances.
+* Major version zero (`0.y.z`) is for initial development only, **anything can change at any time**.
+* Major version one (`1.0.0`) must declare a *public API*, this can be in form of explicit documentation or by the code itself.
+* Once a public API has been declared, all non-backwards compatible changes must increase the major version (`1.y.z` would become `2.0.0`).
+* Minor version (`x.Y.z`) must be incremented if new backwards compatible changes have been made to the public API or if marks anything as deprecated in it. There are also some cases when you may increase it.
+* Patch version (`x.y.Z`) must be incremented only if backwards compatible bug fixes are introduced.
+
+Okay, a lot of variables here, but it serves us great purpose to understand this. With this in mind we can define versions for our dependencies with understanding and predicting their update behaviours. Since semantic versioning supports wildcards and constraints, we can more easily predict the way our dependencies will be updated. It can also aid us in selecting dependencies. If we need a package that will be used in a crucial part of the system, we should almost never use a package that does not have a `1.0.0` release; since no public API has been defined and anything can change at any time. This includes breaking changes that could break your application.
+
+Let's say you want to use the popular HTTP client package Guzzle. You can now surely tell the difference between including version `5.2.*`, `5.*.*` and `*` of this package. The last example is a terrible idea, since it will install *all* new versions of the package, including when `6.0.0` will be released. Since that would be a major version, which by definition includes non-backwards compatible changes, it will most likely break your application. Perhaps `5.*.*` will work because it's supposed to include only backwards compatible changes, but could you live with peace of mind hoping that the maintainer of the package won't introduce breaking changes? 
+
+Remember, package maintainers are people too and are not fault free. They do all their hard work in trying to help you with their code; but shit happens and you should probably cut them some slack when it happens. The number of possible versions your version constraint accepts will probably correlate to the possibility of your application receiving breaking changes. This results in a balancing act; stability on one side and potential security flaws and bugs on the other side. Finding that balance is not an easy formula; just as many other things it depends on a number of variables.
+
+### Version constraints
+
+We now have the background for the versioning of the dependencies we might use; but there are some special operators we can use when defining our version constraints.
+
+If you've ever used Composer, npm or Bower, you have seen package definitions in the corresponding file the package manager uses. It can look like this:
+
+~~~
+"some-package": "1.0.0"
+~~~
+
+This is the most simple example of defining a version constraint to a package, whatever you do it will always install version `1.0.0` of this package. If you would like to include all new patch versions for this major version, you could change it to:
+
+~~~
+"some-package": "1.0.*"
+~~~
+
+If the package maintainer is doing a good job, this should never be an issue and I always prefer this. Since it could fix bugs or security exploits you haven't encountered yet, and by definition is should never include any breaking changes. Trust the maintainer even more? Change it to:
+
+~~~
+"some-package": "1.*"
+~~~
+
+There is hardly any merit in taking this approach. What you're accepting now is added functionality and deprecations to the public API, but no non-backwards compatible changes. If you've built your code depending on `1.1.0` for example, you won't automatically leverage changes in `1.2.0` because it's added functionality. So why risk it? Perhaps one reason might be possible performance improvements, but it's probably still not work the risk. I would argue that even dependencies that are for development only should not take this approach, because it could break a build step or test suite somewhere and stop your deploy or development process. Upgrading a minor or major version should always be an active effort from a developer, making sure things are working.
+
+#### Ranges
+
+Version constraints can also be specified using ranges, the valid ones are 
+
+* greater than: `>`
+* greater than or equal to: `>=`
+* less than: `<`
+* less than or equal to: `<=`
+* not equal to: `!=`
+* between: `-`
+
+How these work should come pretty easy for a developer, but they also support logical *AND* and logical *OR*. A space or a comma will be treated as a logical *AND*. So `>1.0 <1.1` or `>1.0,<1.1` is the same expression and can be pronounced *greater than 1.0 and less than 1.1*. To make a logical *OR* you use `||`, that could look like `<1.0 || >1.1` which can be pronounced *less than 1.0 or greater than 1.1`.
+
+I> ### Logical operators precedence
+I> 
+I> A logical *AND* will always have precedence over logical *OR*.
+
+You can also make a range by using a hyphen, with it you can specify a range between two versions such as `1.0 - 2.0`; which should be self explanatory.
+
+#### Tilde
+
+This is one of two special version constraint operators you will encounter. A tilde translated into english could be: *install this version and upgrade the packages lowest version constraint specified, but never anything higher (and also never a major version)*. Let's look at some examples.
+
+| Will upgrade to:         | 2.0.2 | 2.0.3 | 2.0.4 | 2.1.0 |
+| ------------------------ | ----- | ----- | ----- | ----- |
+| "some-package": "~2.0.1" | Yes   | Yes   | Yes   | No    |
+
+The lowest constraint specified here is the patch version. It will never install any version lower than `2.0.1` (such as `2.0.0`) and it will upgrade to any `2.0.Z` version. But it will **not** upgrade the minor version.
+
+Another example of the tilde operator:
+
+| Will upgrade to:       | 2.1.1 | 2.1.2 | 2.2.0 | 2.2.1 | 3.0.0 |
+| ---------------------- | ----- | ----- | ----- | ----- | ----- |
+| "some-package": "~2.1" | Yes   | Yes   | Yes   | Yes   | No    |
+
+This time our lowest constraint specified is minor version. It will never install any version lower than `2.1.0` (such as `2.0.0` or `2.0.8`) and it will upgrade to any `2.Y.Z` version. But it will **not** upgrade the major version.
+
+And the final example:
+
+| Will upgrade to:     | 2.0.1 | 2.0.2 | 2.1.0 | 2.1.1 | 3.0.0 |
+| -------------------- | ----- | ----- | ----- | ----- | ----- |
+| "some-package": "~2" | Yes   | Yes   | Yes   | Yes   | No    |
+
+Notice something familiar with this? It behaves the same as `~2.1`, the difference is that it can install lower versions than `2.1.0`. 
+
+#### Caret
+
+This is the other kind of special operator for version constraint, the caret `^`. It behaves slightly different than the tilde operator does, being more or less conservative in certain scenarios. We'll run through examples for this as well:
+
+| Will upgrade to:         | 2.0.2 | 2.0.3 | 2.0.4 | 2.1.0 | 2.2.1 | 3.0.0 |
+| ------------------------ | ----- | ----- | ----- | ----- | ----- | ----- |
+| "some-package": "^2.0.1" | Yes   | Yes   | Yes   | Yes   | Yes   | No    |
+
+This is a very liberal constraint. You tell it to install `2.0.1` and then upgrade to **any higher version that is not a major version**. 
+
+On we go:
+
+| Will upgrade to:       | 2.1.1 | 2.1.2 | 2.2.0 | 2.2.1 | 3.0.0 |
+| ---------------------- | ----- | ----- | ----- | ----- | ----- |
+| "some-package": "^2.1" | Yes   | Yes   | Yes   | Yes   | No    |
+
+This is the exact same as `~2.1`, but there is a big difference when dealing with packages that doesn't have a major version yet. Let's do the same thing but with `^0.2`:
+
+| Will upgrade to:       | 0.2.1 | 0.2.2 | 0.2.3 | 0.3.0 |
+| ---------------------- | ----- | ----- | ----- | ----- |
+| "some-package": "^0.2" | Yes   | Yes   | Yes   | No    |
+
+If we had used `~0.2` here instead, it would have allowed anything lower than `1.0.0`. But using the caret on packages without a major release (no public API defined), we can handle these more conservatively. This can be very effective when we want to depend on packages without a major release and want to protect ourself against breaking changes as much as possible.
+
+Using `^2` is the same as `~2` and `2.*`.
+
+### Game of balance
+
+Dealing with version constraints is always a game of balance and the same rules will not apply everywhere. Your applications critical parts should probably never depend on a package with a wide range, but instead be narrow.
+
+Let's take a real world example of this that happened to one of the most popular PHP frameworks, Laravel. A security exploit was discovered in version `4.1.25` that needed an urgent fix. The security exploit allowed for hijacking of "remember me"-cookies used in authentication; this allowed the attacker to remain logged in as another user for a very long time. A patch was written and `4.1.26` was released. What was less known to the community was that this patch introduced a non-backwards compatible change. Anyone who had `4.*` or `4.1.*` for example that updated their dependencies would receive the change which broke their entire application. This caused quite an outrage and people were extremely upset, however the intent of the patch was good and it needed a change to the database schema. The people who had `4.1.25` specified as their version constraint could sit back and watch. They could then pull down the latest version in their development environment, update their code and database schema to align with the patch. When they were done they could easily deploy their application when it was working as intended with the patch. This was also true for people using Composer's lock file (more on that later in the chapter).
+
+This is a great example since it was a dependency that many applications relied on, the ultimate core dependency (if you do not count Laravels dependencies). This dependency were mission critical for all those applications and people lived in good faith of that a patch version should never introduce a breaking change. But it happens, and sometimes must happen. The alternative would be to leave the framework unpatched unless upgrading to a major version, since that is what semantic versioning constitutes. That is not really an option, and suddenly releasing a new major version just for this little security fix would be very troublesome for the maintainer and confusing for the users.
+
+You will have less mission critical parts of your system where you can be more liberal in version constraints. If you have filterable lists in your application that allows your users to export them to spreadsheets; your dependency for generating Excel files probably won't be mission critical. Then you can open up your constraints a bit to allow for bug, security and performance fixes without you having to worry about it.
+
+## Version control
+
+The most frequent question I hear when it comes to dependencies is "should I version control them?" or "should they be committed to the repository?". Short answer: **no, never**. Some people will argue that you should version control them with arguments such as you know they will work with the current code or that Github might be down when you need to install or upgrade them. If you know how to manage your dependencies with version constraints, the first issue will never arise. The second issue could arise, and I've been there a few times myself. However it happens so seldom that I consider it to be a problem that can be ignored. If it occurs at the exact same moment you need to deploy an urgent hotfix, well that sucks. But perhaps you then could instead do a rollback to your previous build?
+
+Having dependencies in your version control gets really messy. For one they increase the size of your repository, most often they will be a larger part of your repository than your application. Second they will be part of commits and pull requests, increasing the entropy in both. Pull request should be short and sweet, having an entire package in there will only bloat it. If you instead just change one line in a package managers dependency file, it will be abundantly clear which package and what version of it you're using.
+
+The only exception is when you version control **entire builds** of your application. This could be common when deploying Docker containers or such. You could make it a part of your normal deploy process as well, if you want to save every build of your application. But a git tag for all your build points should suffice.
+
+## Development dependencies
+
+Almost any dependency management tool separates packages in (at least) regular dependencies and development dependencies. This allows for a good separation in your workflow when dealing with dependencies in certain environments. Take *phpunit* for example, this is a package you want to have in your local environment if you need to run unit tests for your PHP code. Perhaps you do continuous integration, then you need it there too to be able to run your test suite. But once your application is deployed and served to your end users, there is no need for this package to be installed. You would never run a test suite in your production environment.
+
+It's because of these scenarios that the dependency management tool separate packages in this manner. Having all your dependencies installed in your production environment will slow down the install/upgrade process for them and it could potentially slow down your application as well. Make sure you separate them appropriately; there is one really simple question when installing a package, and that is "Will I ever need this in production?". If the answer is no, always put it amongst your development dependencies. And never install those dependencies in your production environment.
+
+The default behaviour for the tools is always to install development dependencies, so make sure you turn that behaviour off in your production environments. Here are the flags to use for the different tools when installing or updating without installing the development dependencies:
+
+| Tool     | Flag         |
+| -------- | ------------ |
+| composer | --no-dev     |
+| npm      | --production |
+| bower    | --production |
+
+## The composer.lock file
+
+Whenever you do an install or update of your dependencies through Composer, a `composer.lock` file will be generated along side your `composer.json` file. There have been some discussion on the lock file in the community. Usually it's people making an effort to inform others on what the lock file provides and how it makes Composer behave when running *install* or *update*. So should you commit it to your repository and version control it? The answer is in most cases **yes**. Since this book is about *applications*, the answer should be yes. If you're instead developing a component or a library, you should turn to the interwebs for further advice.
+
+So what does this file actually achieve? Except from generating merge conflicts in your repository? **It registers exact versions of the installed dependencies**. If you install version `1.2.3` of a package, commit the lock file and push your changes; when your co-coder pulls down your changes to the lock file and runs `composer install`, she will get version `1.2.3` even if the version constraint is `1.2.*` and `1.2.7` is the latest patch version. 
+
+So you should get into the habit of committing the lock file to any repository for your applications. And also try to use `composer install` instead of `composer update` unless you willingly want to update packages. One added benefit to having your lock file version controlled is also that installing dependencies will be faster since Composer does not have to do version discovery (see next section).
+
+I recommend you open a lock file in one of your projects and take a look. It's a json representation of your packages and quite readable to humans.
+
+W> ### Updating all dependencies
+W>
+W> When you run `composer update`, all dependencies will be updated. Beware that this could affect parts of the code you're not currently working on. If you want to only update a specific package, use `composer update vendor/package` instead.
+
+## Composer and github rate limit
+
+You should keep in mind that Composer uses the Github API for version discovery and downloading dependencies. The API enforces a rate limit which means that you're only allowed a certain amount of requests in a certain amount of time. That could easily get chewed up when installing or updating dependencies through Composer. The big issue with this is that in an automated deploy process it will often halt the install/update of dependencies and ask for your login credentials for github. Logged in users does not have the same rate limit as a guest user and it allows for you to install everything without any problems. But you do not want this prompt in your process because it will stop everything. However there are things you can do to prevent it.
+
+Committing the `composer.lock` file previously mentioned is a good practice, because it tells Composer exactly what version to install. That removes version discovery from the process. If you have `2.0.*` as a version constraint without a the lock file committed, Composer has to query the API for finding the suitable version to install. The lock file will remove the need for it.
+
+The other thing you can do is to [generate an OAuth token](https://help.github.com/articles/creating-an-access-token-for-command-line-use/) for your Github account and add it to `~/.composer/config.json` in this format:
+
+{lang=json}
+~~~
+{
+    "github-oauth": {
+        "github.com": "your_github_oauth_token"
+    }
+}
+~~~
+
+Composer will then use that OAuth token when interacting with the Github API and the strict limits will be lifted. 
+
+I> ### Entering credentials when prompted
+I>
+I> If you end up doing a manual install or update and get prompted for credentials, entering them will generate an OAuth token that will be entered in `~/.composer/config.json` for future use.

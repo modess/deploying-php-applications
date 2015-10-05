@@ -1,0 +1,136 @@
+# 2. Goals {#chapter-goals}
+
+I really hope that you have decided you want to improve your deployment process. Well, that is probably why you're reading this book at this moment. You should at this point probably establish a few things. Ask yourself the questions of where you currently are, and where you would like to be. These are essential questions in reaching goals. Between here and there you should probably set a few milestones as well. Sensing that you achieve something is always important. This is starting to sound like a self help book, but I'm of course talking about where your deployment process is and where you would like it to be.
+
+We have a few things we need to go through before we get to the actual list of goals. Understanding the background of the various parts will help you better understand the big picture.
+
+## How it usually begins
+
+Take a deep breath and imagine a peaceful lake in your mind. No just kidding, stop with that. This is still not a self help book.
+
+Since the deployment process is just like any other process in the software development cycle, it will mature in certain ways. It usually starts at a fairly similar place. This place has seen a lot of developers, and it will continue to see a lot of other developers pass by. What I want is to perhaps get people to see what kind of place that is and why you shouldn't go there. The main reason why that place is bad is because it is **at the end** of everything. I realize that I just said that the beginning is at the end, but let me explain that before you call me an idiot.
+
+An application usually starts with an idea. Then some wireframes (either mental or actual ones). Then perhaps some design and some code. Then the first beta is ready for release. Success! Get it out there! This is where people stop and think "Oh right, we need some kind of hosting". Someone with a credit cards pays for the hosting and the developer is tasked with deploying the code to it. Of course that's not a problem for the developer, but usually not much thought will be put into this part. No deployment tools will be used, no automation is put into place. I'm not saying this is the case for all project, but it's a fairly good estimation for most projects.
+
+Do you see the issue at hand here? **Deployment is in most cases an after thought**. It's something many feel they just have to do. Let's just say that most wouldn't get out of bed earlier on a Monday morning because they were so eager to set up the deployment. Usually this will be a fully "fix things as you go" kind of process. Do it quick and dirty, duct tape that shit if you have to. I usually call this *duct tape deployment*. This is more than often a one man or one woman show as well. If someone else would like to deploy, they wouldn't be able to. They would first have to ask the "one man/woman deploy army" on how it's done, what the passwords are, which paths are used, where the database is and everything else that comes with it. Efficient? No.
+
+What we need to start doing is make the deployment an important part in our applications lives. It should be there for our application as a supporting and nurturing parent. Would you let your kid go to the first day of school without you being there? Of course not. The school system in the United States is very fond of the *No Child Left Behind Act*. I would like to propose a *No Application Left Behind Act*, where no applications is left behind because of a bad deployment process. It might be a bad analogy, since they have a really crappy education system in the United Stated. But I hope I got my point across anyway.
+
+## Maturity {#maturity}
+
+During your applications lifetime the deployment process will (hopefully) mature. That is matures is usually a good thing. But somewhere a long the line someone will probably realize that steps need to be taken to improve the it. In which ways it will mature is usually along the lines of the following, the order of them might differ:
+
+* Documentation
+* Automation
+* Verification
+* Notification
+* Tests
+* Tools
+* Monitoring
+
+**Documentation**. This is usually what happens when the transition is made from one person deploying to multiple people deploying. It will be a natural step. Since the deployment process will most likely have manual steps, you can't deploy without the documentation. So somewhere, a document or something similar, will end up describing the different steps that needs to be done in order to deploy.
+
+**Automation**. Multiple people are deploying, but stuff breaks because of inconsistency. Even if all manual steps are documented well, unexpected things will occur that falls outside the scope of the documentation. In these cases, it will end up on the one woman/man deploy since they will have the answers. The response to this is automation. It will probably start out small in an effort to automate everything.
+
+**Verification**. The process have now been automated enough to make anyone deploy. But still it can break in numerous ways. The automation will most likely then be altered to handle errors. This can be as simple as aborting the deploy if any automation fails.
+
+**Notification**. With verification in place, making it notify the right people when it fails should be trivial. Having a deploy fail silently could be catastrophic. Deploying the wrong changes could also be very troublesome. A notification on successful deploys can be just as useful as for a failing one.
+
+**Tools**. It seldom happen that a deployment process will use tools from the start. With a stable process that works in most cases, but can be difficult to extend, tools will most likely be put in place. Adding commands to run with a deployment tool is usually a lot easier than changing the current automation in place. You could say that this will "replace" the current automation, since that automation will often be scripts. It will often also replace the documentation part, since if it's done correctly it will more or less document itself.
+
+**Monitoring**. This is a step few will actually reach. It will be in terms of monitoring how the application and it environments responds to a deploy. This could monitor CPU usage, memory usage or I/O-operations. If a deploy increases memory usage by 30%, you might have a big problem on your hands. So the goal here is to monitor and notify on big deviations for certain key metrics.
+
+## Agility
+
+The world around us as software developers is getting more and more agile. I'm talking about the world of [agile software development](http://en.wikipedia.org/wiki/Agile_software_development), not the outside world. More and more companies are jumping on the agile train, and for a good reason. There are some practices in this that are great such as behaviour-driven development (BDD), test-driven development (TDD), pair programming, continuous integration, sprints, user stories and cross-functional teams just to name a few. 
+
+> Agile: "Characterized by quickness, lightness, and ease of movement; nimble."
+
+This sums it up pretty well. You want your software development cycle to be fast, easy and adaptable. Work in small increments and responding quickly to feedback through iteration. At the beginning of 2001, a bunch of very smart people got together to talk about lightweight development methods. What they ultimately came up with was the publication [Manifesto for Agile Software Development](http://agilemanifesto.org/). I'll share the main part of the manifesto here.
+
+> We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value:
+
+> **Individuals and interactions** over Processes and tools
+> 
+> **Working software** over Comprehensive documentation
+> 
+> **Customer collaboration** over Contract negotiation
+> 
+> **Responding to change** over Following a plan
+> 
+> That is, while there is value in the items on the right, we value the items on the left more.
+> 
+> *Kent Beck, James Grenning, Robert C. Martin, Mike Beedle, Jim Highsmith, Steve Mellor, Arie van Bennekum, Andrew Hunt, Ken Schwaber, Alistair Cockburn, Ron Jeffries, Jeff Sutherland, Ward Cunningham, Jon Kern, Dave Thomas, Martin Fowler, Brian Marick © 2001, the above authors. This declaration may be freely copied in any form, but only in its entirety through this notice.*
+
+This is really exciting stuff. If you take a look at what is valued in the items on the left, it's people, flexibility and speed. Flexibility and speed of the actual development. People is both about the developers and the end users/customers. 
+
+Now you might say that I have been talking about the deployment **process** a lot, and the manifesto clearly states that it favours individuals and interactions over processes and tools. Yes, this is true that it does. However it also say that there is value in the items on the right. I also consider the deployment process to be essential in supporting a true agile development process. The core in agility for software development is iteration, ability to adapt fast and respond to feedback from people. How will you be able to do this efficiently without a good deployment process? If you iterate over a feature and spend two hours on it and then have to spend two hours on deploying it, is that really agile? I would argue no. Even if the deploy takes "only" 30 minutes, if you don't have confidence in it, there are many manual steps or you can't do a quick and easy rollback. What is agile about it then?
+
+## Plan for a marathon
+
+What could be better in all this than doing a comparison with a marathon? Since in an agile world you work in sprints. If you plan your deployment process for the current sprint, your plan will be very short sighted and situational. If you expect your application to live longer than for a few sprints, you need a plan for its future. So plan for a marathon, not a sprint.
+
+Making estimations is just as hard whether you make it for your development time or your applications future. This is especially true in the agile world where adapting fast to feedback could change the direction of that future in a heartbeat. But we should at least try to do this. Try to make some predictions where your application could end up. Coming up with a few scenarios that could occur will not harm you.
+
+Say you deploy your application to a VPS with limited resources with no real options to scale it fast. If you predict there is a possibility your application would get featured on Hacker News or Slashdot and the traffic goes through the roof, now what? Do you have a deployment process that is good enough for quickly moving your application to a new hosting provider? Does your application and deployment process support running on multiple nodes? This is obviously an extreme example, but it highlights the issue.
+
+Just to be clear, I'm not saying you should make your deployment process deal with all the possible scenarios. That would be extremely time inefficient. What I'm saying is that you need to keep those scenarios in the back of your head. If you can at least make stuff with a "if X happens happens, I can change this easily to fit it"-mentality, you have won a lot. Your deployment process should be agile too, try to make it so you can change things fast and easy.
+
+## Release cycles
+
+You can write how much code you like, but if you're not shipping any of it you're not contributing with any value. You and your team should have a goal of how often you want to release code. Whether it be once every month or four times a day, as long as you have a goal and a plan for it. If you do not have a goal for it, you can't reach something. So set a goal if you do not have one and try to get there. Knowing your current and your wanted release cycle is important for planning your deployment process.
+
+I> By "shipping code" I refer to deploying it, from finishing a feature in your local environment to getting it out to the production server(s).
+
+There are a few ways in which we ship code.  I think the different models of it can be summed up in to:
+
+* I'm done, ship it.
+* The new version is done, ship it.
+* X amount of time has passed, ship it.
+* I pushed it, ship it.
+
+This is of course overly simplified, and there are many variants of these out there in the wild. But let's discuss these individually to see what they're about.
+
+**I'm done, ship it**. We could call this *feature deploy* or *shotgun deploy*, depending on how we feel about it. This is a typical model for when there is one or very few developers for an application. It's an ad-hoc type of deploy, when you have finished and tested your feature you deploy it. I actually think this is a very underestimated type of deploy. If you can make sure that you do not push changes someone else have made, I think it's a great way to deploy. Why should we wait for a ritualistic deploy? If you version control with a good branching strategy, these types of ad-hoc deploys is definitely possible.
+
+**The new version is done, ship it**. This would be when your software has reached a new version, either minor or major versions. The point here is that the deploy payload will probably be large and the development has been undergoing for a considerable amount of time. I would avoid this model like the plague when it comes to web applications. One of the great advantages of web applications is the ability to change the application quickly, without having to go through a lot of build steps and then make sure your users have to update their application. On the web you ship your code and then your user doesn't have a choice. Why even deploy only after a minor version is completed? If you are doing this one of the reasons could be that the deployment process is to complex. Fix it. Stop pushing like this.
+
+**X amount of time has passed, ship it**. If your team is working in sprints, this is probably how you deploy. Whenever a sprint is complete you deploy. The amount of time between deploys can vary depending on how long sprints you have of course. But the main part here is that deploys happen on a recurring time, for example every other week on Mondays. I do not mind this model for deployment at all if you have reasonable sprint durations. If you have three month sprints, it's bad. But then you're doing the whole agile thing incorrect and should look over your entire software development process. But if you have sprints of perhaps 1-2 weeks, go for it.
+
+**I pushed it, ship it**. Also known as *continuos deployment*. Ah, the unicorn of deploys. Here everything is deployed when one or more commits are pushed to a location. This is done through (at least should be) a very complex system of automation with testing and monitoring. The topic of how you can accomplish this is not an easy one and I will not try to explain it here. 
+
+One important point to make here is that being able to continuously deploy is living the dream. Very few will have time, knowledge and patience to set up a complete process of continuos deploys. However, it's something we should strive for. Even if you do not want to continuos deploy. Building an environment where it's possible will benefit you tremendously. Having the correct tools in place for automation, monitoring, etc will never be a bad thing. If you could have it all and just flip off the little switch that deploys everything automatically, you should have a sense of bliss and serenity. You've done it.
+
+## Technical debt and rot
+
+Technical debt and software rot is something well known and talked about in the developer community, but the concepts can be applied to more than code. We should take care of our deployment just as much as our code. When an ad-hoc deployment process is put in place, we immediately start hoarding technical debt. And when it starts to rot, let's call it that we have **shipping rot**. 
+
+The problem with this kind of debt and rot is that it is more than usual exponential. Have you heard of the [broken window theory](http://en.wikipedia.org/wiki/Broken_windows_theory)? The TL;DR version is: when people see that a building has a broken window, they stop caring less about maintaining it. And into the spiral it goes. This applies perfectly to software development. Legacy code stays legacy and bad code breeds more bad code. The same goes for our deployment process: a bad process will stay bad or get worse. 
+
+If you can stop that first window from breaking, or quickly repair it, everyone else will care for that it stays that way. Having goals set is a great tool for quickly dealing with that broken window. And if you at some point realize that there are many broken windows, you should perhaps fix them all in one big swoop. 
+
+## The list
+
+We can condense the goals in to a bullet list. Everybody likes lists, right? When reading the list, try to reflect on where you are currently are at the different goals.
+
+* Automated
+* Responsive
+* Atomic
+* Reversible
+* Simple
+* Fast
+* Agnostic
+
+**Automated**. Have you read the first chapter? If not, do it. Not having an automated process is the root of all evil. 
+
+**Responsive**. A good deployment process responds to what is happening. If an error occurs somewhere, it should probably abort and notify you or the correct people somehow. Having steps fail silently in a chain can be very destructive for your application.
+
+**Atomic**. Nothing in your deploy should be able to break your application. You should comply with the concept of completing a build before serving it. The transition between the previous and the new build should be as close to instant as possible.
+
+**Simple**. Everyone should understand it. Everyone should be able to use it. Everyone should feel comfortable with it. This is true for deploying, making changes or extending it.
+
+**Reversible**. Because it sounds better than "rollbackable". And I say that being able to roll back is just as important as deploying your changes. The reverse process should also follow all the list of goals.
+
+**Fast**. You want it to be fast. Speed is key in deploying often. And fast rollbacks combined with fast deploys is another key. That key is confidence. If something breaks, you can easily go back and fix things without that stress knowing production is in a broken state.
+
+**Agnostic**. Building a deployment process that is dependent on its environment could be devastating. Being able to only deploy to Amazon Web Services for example will be great until you have to switch provider. The application should happily be deployed anywhere. It should also be agnostic about who is deploying.
