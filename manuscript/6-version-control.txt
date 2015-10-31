@@ -1,4 +1,4 @@
-# 6. Version control
+# 6. Version control {#chapter-version-control}
 
 This is not a book about version control, neither will this chapter go into how and why you should version control. This chapter will discuss a workflow that is suitable for optimizing your deployment process. You do this through a *branching strategy*.
 
