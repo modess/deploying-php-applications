@@ -1,20 +1,18 @@
 # 3. Environments
 
-Having multiple environments for your application is essential for quality. Each environment serve a certain purpose and represents a state for your application in some way. I'll go through some of the environments you usually have for your application.
-
-When I talk about an environment I mean in which your application lives. It could be separate servers or virtual machines. Having multiple environments running on one machine is not an issue if they are separated, but they should always be separated in some way. This is to prevent them from interfering with one another. If two of your environments are sharing the same database or cache, you could end up with unexpected results and even create bugs that didn't exist in the first place.
+Having multiple environments for your application is essential for quality. Each environment serve a certain purpose and represents a state of your application in some way. When I talk about an environment I mean in which your application lives, that could be separate servers or virtual machines. Having multiple environments running on one machine is not an issue if they are separated but they must be it in some way to prevent them from interfering with eachother. If two of your environments are sharing the same database or cache, you could end up with unexpected results and even create bugs that didn't exist in the first place.
 
 ## Repeatable
 
-Being told you're a "broken record" is never fun, but for your environments it's the best thing you could say. The most important thing to strive for with your environments is that they always look the same. You want all environments to have the same setup. In the best case scenario they are **repeatable through automation**. Operating system and software should all be of the same version and have the same configuration.
+Being told you're a "broken record" isn't fun but for your environments it's the best thing you could say. The most important thing to strive for with your environments is that they always have the same setup where operating system and software should be of the same version and have the same configuration. And in a best case scenario they are **repeatable through automation**. 
 
-Many times have I encountered unexpected behaviour because of environments differing from each other. Some operating systems, CentOS for example, treat files case sensitive while others like Ubuntu treat them case insensitive. This could end up with files not being read into your application. Another good example is how JSON is encoded/decoded, some environments will encode `0` to `"0"`. If your application is expecting an integer and will get a string, things can go wrong.
+Many times have I encountered unexpected behaviour because of environments differing from each other. Some operating systems, CentOS for example, treat file names case sensitive while others like Ubuntu treat them case insensitive. This could end up with files not being read into your application. Another good example is how JSON is encoded/decoded; some environments will encode `0` to `"0"`. If your application is expecting an integer and will get a string then things can go wrong.
 
-Knowing that your application will behave the same in your various environments is great. Then you do not have to think about it. Removing uncertainty is important for gaining confidence in your deployment process.
+Knowing that your application will behave the same in your various environments is great because then you do not have to think about it. *Removing uncertainty* is important for gaining confidence in your deployment process.
 
 ### Server provisioning
 
-I said before that this topic is outside the scope of this book, but I still want to touch on it. If you want to achieve repeatability in your environments to the point where all your environments are all the same, you need it. Server provisioning is automating your environment. Say you're firing up a new virtual instance or installing a new server. What do you need to achieve now? The steps are usually:
+I said before that this topic is outside the scope of this book but I still want to touch briefly on it. If you want to achieve repeatability in your environments to the point where all your environments are all the same: you need it. Server provisioning is automating your environments. Say you're firing up a new virtual instance or installing a new server, what are your next steps? Often they are:
 
 * Install software
 * Set configuration values for the software
@@ -22,9 +20,9 @@ I said before that this topic is outside the scope of this book, but I still wan
 * Configure the service or application
 * Serve the service or application
 
-If you do this manually, you will inevitably loose control of how to repeat it. Making sure manually that correct values are set in `php.ini` will never be maintainable. The more environments you have, the tougher it will become. And when you need to update configuration values you do not want to do it manually. Need to update the file size upload limit on 78 server instances? Have fun. Perhaps get an intern.
+If you do this manually you will inevitably loose control of how to repeat it. Making sure that correct values are set in `php.ini` across all servers will never be maintainable if done in a manual fashion. The more environments you have, the tougher it will become. Need to update the file size upload limit on 78 server instances? Have fun. Perhaps get an intern.
 
-There are a number of tools for server provisioning. The current most popular ones are [Chef](https://www.getchef.com/), [Puppet](http://puppetlabs.com/) and [Ansible](http://www.ansible.com/). The latter have gained a lot of traction lately. I suggest you read up on them. Take a look at what problems they try to solve and how they solve them. It will take your deployment process to the next level.
+There are a number of tools for server provisioning. The current most popular ones are [Chef](https://www.getchef.com/), [Puppet](http://puppetlabs.com/) and [Ansible](http://www.ansible.com/). The latter have gained a lot of traction lately. I suggest you read up on them and take a look at what problems they try to solve and how they solve them. They can help you with taking your deployment process to the next level.
 
 ## Configuration / environment variables
 
@@ -32,13 +30,13 @@ An important aspect of environments is configuring your application for the envi
 
 > Apps sometimes store config as constants in the code. This is a violation of twelve-factor, which requires strict separation of config from code. Config varies substantially across deploys, code does not.
 
-The distinction between code and configuration is the important part since your application should be able to run your code without depending on configuration to be part of it. They state a simple but powerful question to this, which is *can you at any given time open source your application without compromising any credentials?* If you could in theory do this you have a strict separation of code and configuration and I'll show you how to do this with a simple and great tool called *PHP dotenv*.
+The distinction between code and configuration is important since your application should be able to run  without depending on configuration in your repository. They state a simple but powerful question to this, which is *can you at any given time open source your application without compromising any credentials?* If you could in theory do this you have a strict separation of code and configuration and I'll show you how to do this with a simple and great tool called *PHP dotenv*.
 
-The goal is to supply your application with configuration that is outside of the repository and this could be any important hostnames or credentials such as database connections, cache connections or credentials for third party services such as *S3*, *IronMQ* or *MailChimp*.
+The goal is to supply your application with configuration that is outside of the repository and this could be any important hostnames or credentials for database connections, cache connections or third party services such as *S3*, *IronMQ* or *MailChimp*.
 
 ### PHP dotenv
 
-This tool is probably all you need for your configuration requirements, it's  simple yet powerful. It does not require you to edit any virtual hosts in Nginx or Apache, nor add any PHP configuration values in the ini file. All you do is create a file with variables in a key/value manner and it populates the global variables `$_ENV` and `$_SERVER` for you and also makes them accessible via [`getenv()`](http://php.net/manual/en/function.getenv.php) function.
+This tool is probably all you need for your configuration requirements, it's  simple yet powerful. It does not require you to edit any virtual hosts in Nginx or Apache nor add or modify any PHP configuration values. All you do is create a file with variables in a key/value manner and it populates the global variables `$_ENV` and `$_SERVER` for you and also makes them accessible via the [`getenv()`](http://php.net/manual/en/function.getenv.php) function.
 
 Installation is done through Composer:
 
@@ -52,7 +50,7 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 ~~~ 
 
-After this we create a file `.env` in the directory we supplied and for the sake of an example we add our database configurations to it:
+After this we create a file called `.env` in the directory we supplied and for the sake of an example we add our database configurations to it:
 
 ~~~
 DATABASE_HOST=localhost
@@ -60,7 +58,7 @@ DATABASE_USERNAME=user
 DATABASE_PASSWORD=password
 ~~~
 
-We can now access these configuration values in our application, all three of these will result in the variable being set to *localhost*:
+We can now access these configuration values in our application and all three of these return *localhost*:
 
 {lang="php"}
 ~~~
@@ -69,7 +67,7 @@ $databaseHost = $_ENV['DATABASE_HOST'];
 $databaseHost = $_SERVER['DATABASE_HOST'];
 ~~~
 
-I recommend using `getenv()`, or even better writing a wrapper function that allows you to pass a default value if the configuration value isn't set (inspired by Laravel´s [env()](https://github.com/laravel/framework/blob/a1dc78820d2dbf207dbdf0f7075f17f7021c4ee8/src/Illuminate/Foundation/helpers.php#L626) function).
+I recommend using `getenv()` or even better writing a wrapper function that allows you to pass a default value if the configuration value isn't set (inspired by Laravel´s [env()](https://github.com/laravel/framework/blob/a1dc78820d2dbf207dbdf0f7075f17f7021c4ee8/src/Illuminate/Foundation/helpers.php#L626) function).
 
 {lang="php"}
 <<(../code/chapter-3/env-function.php)
@@ -81,7 +79,7 @@ This allows you to fetch a configuration value or get a default value
 $databaseHost = env('DATABASE_HOST', 'localhost');
 ```
 
-Make sure your configuration file is ignored in your repository so it doesn't get commited. Remember the part where you should be able to, at least in theory, be able to open source your applications.
+Make sure your configuration file is ignored in your repository so it doesn't get committed. Remember the part where you should be able to, at least in theory, open source your application without compromising any credentials.
 
 I> ### Example configuration file
 I>
@@ -91,25 +89,25 @@ I> For reference and easy setup create an example configuration file that you ca
 
 Having a local development environment is something you should strive for. With local I mean on your actual computer, not on a centralized server somewhere you access through a VPN service or similar. Being able to work on your code anywhere without an internet connection is nice. 
 
-I always run my local development environment in a virtual machine with [Vagrant](http://www.vagrantup.com). This allows me to go haywire with everything. If I fuck up the environment badly enough, I just destroy the virtual machine and provision it from scratch. It's great for testing things in your environment without having to worry about breaking something on your computer or for someone else. Want to test your application in a different PHP version for example? Install, test, reset.
+I always run my local development environment in a virtual machine with [Vagrant](http://www.vagrantup.com). This allows me to go haywire with everything and if I fuck up the environment badly enough I just destroy the virtual machine and provision it from scratch. It's great for testing things in your environment without having to worry about breaking something on your computer or for someone else. Want to test your application in a different PHP version for example? Install, test, reset.
 
-The main point here is that you want to be able to work on your application whenever. With a local environment you can work on a flight across the atlantic and push/pull changes as soon as you get a connection to the internet. If you end up in a situation where you are dependent on an internet connection to work, you'll curse yourself when you don't have one.
+The main point is that you want to be able to work on your application whenever. With a local environment you can work on a flight across the atlantic and push/pull changes as soon as you get a connection to the internet. If you end up in a situation where you are dependent on an internet connection to work you'll curse yourself when you don't have one.
 
-Having your local environment repeatable is the number one tool for introducing new team members to your code. Imagine you start at a new job and all you do it `git clone <insert vagrant repository here>` and then a `vagrant up` and you're all set. Sounds like a dream doesn't it? Usually time is invested in writing documentation for setting up a local environment. This documentation is more than often outdated and no one really wants to take responsibility for keeping it updated.
+Having your local environment repeatable is the number one tool for introducing new team members to your code. Imagine you start at a new job and all you do it `git clone <insert vagrant repository here>` and then a `vagrant up` and you're all set. Sounds like a dream doesn't it? Usually time is invested in writing documentation for setting up a local environment and that documentation is more than often outdated and no one really wants to take responsibility for keeping it updated.
 
 ## Development environment
 
-The name of this one can be somewhat misleading. No development work should be done here. But the name comes from the branching strategy in chapter 3 on Version Control. This is instead a common ground for features and bug fixes. All code that should be shared and tested by others will end up here. The first step after finishing something in your local environment will most often be to merge it and push it to the development environment.
+The name of this one can be somewhat misleading. No development work should be done here but the name comes from the branching strategy in [chapter 6 on Version Control](#chapter-version-control). This is a common ground for features and bug fixes where all code that should be shared and tested by others will end up here. The first step after finishing something in your local environment will most often be to merge it to your main branch and push it to the development environment.
 
-It's a great place for early testing by yourself and your team. Getting an extra set of eyes on something early on can be a great quality tool. In general code reviews should also be performed before something is merged and pushed to this environment. Code review is a very effective tool for quality, knowledge sharing and stomping out some obvious errors. Generally all developers will have certain domain knowledge and someone else could perhaps tell right away if your code won't work with a specific part of the domain.
+It's a great place for early testing by yourself and your team. Getting an extra set of eyes on something early on can be a great quality tool. Code reviews should be performed before something is merged and pushed to this environment since it's a very effective tool for quality, knowledge sharing and stomping out some obvious errors. All developers will have certain domain knowledge and someone else could perhaps tell right away if your code won't work with a specific part of the domain.
 
 ## Staging environment
 
-Your staging environment is very important. It should to the fullest extent possible duplicate your production environment. This is where you do your final testing of your code before you push it to production. 
+Your staging environment is very important and it should to the fullest extent possible duplicate your production environment. This is where you do your final testing of your code before you push it to production and serve your application to the users. 
 
-When I duplicate to the fullest extent, I do not mean that it should connect to the production database for example. Having a database that gets updated with a production dump every 24 hours is good enough. Does your application have multiple database instances and perhaps connect to a cache cluster? The staging environment will need that as well. Is the application running on multiple nodes behind a load balancer? Set up your staging environment in the same say. Remember, **as close to the production environment as possible**.
+With duplicate to the fullest extent I do not mean that it should connect to the production database for example. Having a database that gets updated with a production dump every 24 hours is good enough. Does your application have multiple database instances and perhaps connect to a cache cluster? The staging environment will need that as well. Is the application running on multiple nodes behind a load balancer? Set up your staging environment in the same say. Remember, **as close to the production environment as possible**.
 
-Being able to test against production data is sometimes necessary. But be extremely careful when doing this for obvious reasons. Make sure you do not test features that for example could end up e-mailing stuff to users that they're not expecting. Your staging environment should perhaps only allow outgoing e-mail to certain addresses that belongs to people working with the application. Here is a simple example that logs the e-mail if it's not in production:
+Being able to test against production data is sometimes necessary but be extremely careful when doing this for obvious reasons. Make sure you do not test features that for example could end up e-mailing users. Your staging environment should perhaps only allow outgoing e-mail to certain addresses that belongs to people in your team or in your company. Here is a simple example that logs the e-mail if it's not in production:
 
 {lang=php}
 ~~~
@@ -138,23 +136,21 @@ function sendEmail ($to, $from, $subject, $message) {
 
 ## Production environment
 
-This one is quiet obvious. It's the actual server serving your application to your end users. It does not have to be one server, it could be multiple instances being served through a load balancer. However, it will be the endpoint for your users.
+This one is quiet obvious and it's the server(s) serving your application to your end users. Whether it's one server or multiple ones behind load balancer; this is the endpoint for your users.
 
-It will contain an as stable as possible code base. Having code that is extensively tested and as bug free as possible is crucial. What is to be said here is that **it's for this environment we need a great deployment process**. All the effort we put in to the process will reflect on the quality and stability of your production environment.
+It will contain an as stable as possible code base with code that is extensively tested and as bug free as possible. What is to be said here is that **it's for this environment we need a great deployment process**. All the effort we put in to the process will reflect on the quality and stability of your production environment.
 
 ## Testing environment(s)
 
-Having one or multiple test environments is not obligatory, but it is something that brings a lot of benefits for your application. Depending on the size of your application it will make testing a lot easier. If you are able to set up test environment for specific branches for example, you can easily give access to testers for feature branches.
+Having one or multiple test environments is not obligatory but it is something that can bring a lot of benefits for your application. Depending on the size of your application it will make testing a lot easier. If you are able to set up test environment for specific branches for example, you can easily give access to testers for feature branches.
 
-There are a few things that are essential for having success with test environments: speed and repeatability. If you can without major effort set up a test environment and check out a certain branch, your testing possibilities will increase dramatically. When I say speed, I would consider 30 minutes or less a reasonable amount of time. Longer than that and you can start to experience too big discrepancies is development speed and test environment speed. If you're not able to update your test environment with the latest changes it will hardly be worth your time. The loop here is to get quick feedback on your code and react to it. Fix the code, push to the test environment again and then get new feedback.
+There are a few things that are essential for having success with test environments: speed and repeatability. If you can without major effort set up a test environment and check out a certain branch, your testing possibilities will increase dramatically. When I say speed I would consider 30 minutes or less a reasonable amount of time. Longer than that and you can start to experience too big discrepancies in development speed and test environment speed. Also If you're not able to update your test environment with the latest changes it will hardly be worth your time. The loop here is to get quick feedback on your code and react to it. Fix the code, push to the test environment again and then get new feedback.
 
 ## Simplify server access
 
-In the process of managing multiple servers you end up wanting to make the access to the servers faster and easier. There are a some things you can do to make this easier. 
+In the process of managing multiple servers you end up wanting to make the access to the them faster and easier. First of all creating host entries for your various servers will remove the need of looking up IP addresses. For some servers you won't need it since they will be publicly accessible through domains such as your production environment. But even for your production environment you might have servers for databases, load balancers, caches, etc and they might not be accessible through a public domain. But you will still need to access them on a regular basis for maintenance and debugging so create host entries for them.
 
-First of all creating host entries for your various server will remove the need of looking up IP addresses. For some servers you won't need it since they will be publicly accessible through domains, such as your production environment. But even for your production environment you can have servers for databases, load balancers, caches, etc and they will most likely never be allowed access through a public domain. But you will still need to access them on a regular basis for maintenance and debugging, so create host entries for them.
-
-The second thing is setting up and maintaining a SSH configuration file. In this you can manage hosts, hostnames, keys, ports and everything else you need to simplify your access to the servers. Compare these commands and you'll realize that you can gain a lot by this:
+The second thing is setting up and maintaining your SSH configuration file. In this you can manage hosts, hostnames, keys, ports and everything else you need to simplify your access to the servers. Compare these commands and you'll realize that you can gain a lot by this:
 
 ```
 ssh -i ~/.ssh/myapp-staging.key staging@123.123.1.9 -p 2223
@@ -192,4 +188,4 @@ Host myapp-production-db
     IdentityFile ~/.ssh/myapp-production.key
 ```
 
-As you can see, multiple hosts can be defined and you can create one for each of your servers that you manage often. This will save you lots of time in accessing the servers. There are even more cool stuff you can do with it, such as specifying wild card hosts and more. You can do some further reading on the [man page for ssh_config](https://www.freebsd.org/cgi/man.cgi?query=ssh_config&sektion=5).
+As you can see, multiple hosts can be defined and you can create one for each of your servers that you manage often. This will save you lots of time in accessing the servers. There are even more cool stuff you can do with it such as specifying wild card hosts and more. You can do some further reading on the [man page for ssh_config](https://www.freebsd.org/cgi/man.cgi?query=ssh_config&sektion=5).
