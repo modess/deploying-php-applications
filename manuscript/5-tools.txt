@@ -12,7 +12,7 @@ I will below cover a few of the common tools. They all have their pros and cons 
 
 {pagebreak}
 
-## Git hooks
+## 5.1 Git hooks
 
 When it comes to simplicity nothing beats git hooks in my opinion. But this comes with a big **if** though. That **if** is if you don't want to do anything fancy with it. When you dive deeper and find out how the hooks work internally it can get a bit messy and scary. For simple deploys and builds I think it's great.
 
@@ -27,19 +27,19 @@ Here are the available hooks, on which side they are on, when they trigger and e
 | pre-commit         | client | Before a commit is done | Checking code style or linting
 | prepare-commit-msg | client | After the default commit message is created | Changing the default message. Could be providing a template for commit messages
 | commit-msg         | client | After a commit message is provided | Validating the commit message. If this does not pass the commit will be aborted
-| post-commit        | client | After a commit is committed | Notifications      
+| post-commit        | client | After a commit is committed | Notifications
 | applypatch-msg     | client | Before a patch proposed commit message is applied | Validate the message just as with *commit-msg*
 | pre-applypatch     | client | After a patch is applied, but before the commit is created | Verify the contents of the patch by running test suites for example
-| post-applypatch    | client | After a patch commit is created |  Notifications   
+| post-applypatch    | client | After a patch commit is created |  Notifications
 | pre-rebase         | client | Before a rebase operation | Denying rebasing of pushed commits
-| post-checkout      | client | After a checkout operation is done | Verify the application state. Running a `composer dump-autoload` here is a good example.        
-| post-merge         | client | After a merge operation is done | Restore data in the working tree that git can't track   
-| post-rewrite       | client | When a command that replaces commits runs | See *post-merge* and *post-checkout*                  
-| pre-push           | client | During a push. After the remote refs are updated but before any objects have been transferred | Validate a set of refs         
-| pre-auto-gc        | client | Before garbage collection | Notify that it's done or abort it if the timing is bad  
-| pre-receive        | server | Before receiving anything from a push | Access control         
-| post-receive       | server | After receiving a push | Notifications     
-| update             | server | Before receiving anything from a push, once per pushed branch | Same as *pre-receive* but branch specifically         
+| post-checkout      | client | After a checkout operation is done | Verify the application state. Running a `composer dump-autoload` here is a good example.
+| post-merge         | client | After a merge operation is done | Restore data in the working tree that git can't track
+| post-rewrite       | client | When a command that replaces commits runs | See *post-merge* and *post-checkout*
+| pre-push           | client | During a push. After the remote refs are updated but before any objects have been transferred | Validate a set of refs
+| pre-auto-gc        | client | Before garbage collection | Notify that it's done or abort it if the timing is bad
+| pre-receive        | server | Before receiving anything from a push | Access control
+| post-receive       | server | After receiving a push | Notifications
+| update             | server | Before receiving anything from a push, once per pushed branch | Same as *pre-receive* but branch specifically
 | post-update        | server | After refs have been updated from a push | Builds
 
 ### Making them run
@@ -71,8 +71,8 @@ If you want to use Bash in your hooks, you can do that:
 
 {lang=bash}
 ~~~
-#!/bin/bash 
-echo "Hello World!"  
+#!/bin/bash
+echo "Hello World!"
 ~~~
 
 Or if you prefer Python, use that:
@@ -80,7 +80,7 @@ Or if you prefer Python, use that:
 {lang=python}
 ~~~
 #!/bin/python
-print "Hello world"  
+print "Hello world"
 ~~~
 
 Or why not PHP? You're probably familiar with this language.
@@ -88,7 +88,7 @@ Or why not PHP? You're probably familiar with this language.
 {lang=php}
 ~~~
 #!/bin/php
-echo "Hello world"; 
+echo "Hello world";
 ~~~
 
 And so on. This makes the hooks extremely versatile since you can write them in the language you are most comfortable in. However, you can also choose to write them to be able to run anywhere. So using Bash, for example, makes it run pretty much anywhere (except for Windows, but you can probably get that to work also).
@@ -128,16 +128,16 @@ The paths are arbitrary, I will just use these in my examples.
 
 First of all we will set up the remote. This is done by logging in on your server through a shell and executing the following
 
-    mkdir -p /var/www/app.git  
-    cd /var/www/app.git  
-    git init 
+    mkdir -p /var/www/app.git
+    cd /var/www/app.git
+    git init
 
 Now you have an empty repository in place for your application on your remote.
 
 Then we create a repository in our local environment and add the remote there so we can push to it.
 
-    mkdir -p ~/dev/app  
-    cd ~/dev/app  
+    mkdir -p ~/dev/app
+    cd ~/dev/app
     git init
     git remote add production <user>@<yourhost>:/var/www/app.git/
 
@@ -156,9 +156,9 @@ First of all we create the hook for *post-receive*. It's responsibility will be 
 
 {lang=bash}
 ~~~
-cd /var/www/app.git  
-touch .git/hooks/post-receive  
-chmod +x .git/hooks/post-receive  
+cd /var/www/app.git
+touch .git/hooks/post-receive
+chmod +x .git/hooks/post-receive
 ~~~
 
 Now it exists and is executable. Let's add all the commands that will update the repository.
@@ -172,9 +172,9 @@ Now we need to make the actual build. This will be handled by a *post-update* ho
 
 {lang=bash}
 ~~~
-cd /var/www/app.git  
-touch .git/hooks/post-update  
-chmod +x .git/hooks/post-update  
+cd /var/www/app.git
+touch .git/hooks/post-update
+chmod +x .git/hooks/post-update
 ~~~
 
 Now we can add all the commands we need to run. These commands will be arbitrary and you will have to add all the build steps necessary for your own application. I will just add a simple `composer update` for updating dependencies.
@@ -182,8 +182,8 @@ Now we can add all the commands we need to run. These commands will be arbitrary
 {lang=bash}
 ~~~
 #!/bin/bash
-cd ..  
-unset GIT_DIR 
+cd ..
+unset GIT_DIR
 
 composer update
 ~~~
@@ -201,9 +201,9 @@ There is a few steps we will go over here to make this all glue together. We'll 
 
 {lang=bash}
 ~~~
-cd /var/www/app.git/repository  
-touch .git/hooks/post-receive  
-chmod +x .git/hooks/post-receive  
+cd /var/www/app.git/repository
+touch .git/hooks/post-receive
+chmod +x .git/hooks/post-receive
 ~~~
 
 And adding the necessary commands for updating the repository on a push:
@@ -215,9 +215,9 @@ And we create the *post-update* hook:
 
 {lang=bash}
 ~~~
-cd /var/www/app.git/repository 
-touch .git/hooks/post-update  
-chmod +x .git/hooks/post-update  
+cd /var/www/app.git/repository
+touch .git/hooks/post-update
+chmod +x .git/hooks/post-update
 ~~~
 
 And add a simple start to it:
@@ -321,7 +321,7 @@ The less good parts are:
 
 {pagebreak}
 
-## Phing
+## 5.2 Phing
 
 This tool has been around for a very long time, according to their changelog the initial pre-release was in October 2002. Which is an eon in internet time. You can find it on [its website](http://www.phing.info/). It's based on Apache's [Ant](http://ant.apache.org/) tool which is a build tool built in Java. You can probably already tell that since it's very old and based on a Java tool that it's not cutting edge. The strength is that it has been around for a very long time and with that comes stability and maturity. Actually the "preferred method" of installation is through PEAR according to their official documentation, and that's not a good sign. But it can be installed through Composer as well, which it should be and the documentation cover this.
 
@@ -484,7 +484,7 @@ We will assume that we have a super simple application that looks like this:
 ├── composer.json
 ├── composer.lock
 ├── index.php
-└── vendor/ 
+└── vendor/
 ~~~
 
 What do we need to achieve in deploying this application? It's as simple as running a `composer update`. But for the sake of our example we want to remove the `vendor/` folder on each deploy to do a clean install of dependencies. This allows us to use the things we learned previously.
@@ -613,7 +613,7 @@ The less good parts are:
 
 {pagebreak}
 
-## Capistrano
+## 5.3 Capistrano
 
 In their own words, Capistrano is a *Remote multi-server automation tool* and it is written in Ruby. That it is written in Ruby can be somewhat of an annoyance if you're not familiar with it, but with its great documentation and your Google skills you shouldn't have a hard time using it at all.
 
@@ -649,7 +649,7 @@ And you will now have a structure like this in your application
 │   └── deploy.rb
 └── lib
     └── capistrano
-            └── tasks 
+            └── tasks
 ~~~
 
 As you can see, by default it sets up a structure you could easily extend. It adds staging and production as environments since they are the most common ones, but nothing will stop you from setting up more environments if needed. A bunch of boilerplate configuration is provided for you in the configuration files. Most of it is commented out but it gives you a good overview of what is possible and how you can achieve certain things. Some parts are non-optional and we will go through them to make you application deployable.
@@ -785,7 +785,7 @@ The less good parts are:
 
 {pagebreak}
 
-## Rocketeer
+## 5.4 Rocketeer
 
 If you want a tool that is tightly integrated with PHP, fast, modern and easy to use, this could be the tool you're looking for. It has taken many proven concepts from predecessors and made it into a tool worthy of modern development and deployment. It is coded in PHP but it can manage deploying any type of application. It provides a powerful set of features that is probably enough for many applications, but it is also based on a modular approach that enables you to swap, extend or hack parts to fit your particular need if necessary.
 
@@ -821,13 +821,13 @@ You will be asked a bunch of questions for the setup process, they are all strai
 ~~~
 └── myapp/
     └── .rocketeer/
-        ├── config.php 
+        ├── config.php
         ├── hooks.php
         ├── paths.php
         ├── remote.php
         ├── scm.php
         ├── stages.php
-        └── strategies.php 
+        └── strategies.php
 ~~~
 
 ### Configuring
@@ -858,7 +858,7 @@ leanpub-end-insert
 In our previous examples we've saved five previous deployed versions of our application as well. The default setting in Rocketeer is to save four, so let's change that also:
 
 {lang="php"}
-~~~    
+~~~
 // The number of releases to keep at all times
 leanpub-start-delete
 'keep_releases'  => 4,
@@ -905,7 +905,7 @@ leanpub-start-delete
         'public',
 leanpub-end-delete
     ],
-    
+
 // [...]
 ~~~
 

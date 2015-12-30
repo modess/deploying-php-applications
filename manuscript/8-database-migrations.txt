@@ -1,12 +1,12 @@
 # 8. Database migrations
 
-Almost all applications that need to persist data will end up using a database of some sort and in most cases MySQL or PostgreSQL. With this comes a database schema (or structure if you'd like) of tables and columns that is necessary for the application to store data it uses for certain tasks such as state or statistics. The process of dealing with changes to the database schema has often been dealt with manually where in best cases some sort of documentation or sequenced SQL files ending up in a repository for reference. 
+Almost all applications that need to persist data will end up using a database of some sort and in most cases MySQL or PostgreSQL. With this comes a database schema (or structure if you'd like) of tables and columns that is necessary for the application to store data it uses for certain tasks such as state or statistics. The process of dealing with changes to the database schema has often been dealt with manually where in best cases some sort of documentation or sequenced SQL files ending up in a repository for reference.
 
 But now we have entered a new era of PHP application development and the tools for dealing with database changes are now modern and often built into frameworks. The most used term is *migrations* and in this chapter I will use the [Phinx](https://phinx.org/) as the weapon of choice for handling migrations.
 
 The benefits are many and the two major ones are that you get versions of your database schema where each step either create, delete or manipulate tables or columns in the previous schema. You will get, if you don't manually change it, a chronological list of files that contains your database changes. Adding a new migration file along with your feature or fix you can make sure that the database gets updated or performs a rollback along with the code automatically, once you add this to your deploy process. Which migration files to run next or to rollback is stored in the database itself. There is also an added benefit of getting developers up and running when starting to develop on your application, you do not need to dump your database and import it or keep track of the structure in a separate file. Clone the repository and run the migrations and they should have a fully functional database to work with.
 
-## Installation & configuration
+## 8.1 Installation & configuration
 
 As always I recommend using Composer to install Phinx
 
@@ -18,7 +18,7 @@ This will install all dependencies and the Phinx binary at `vendor/bin/phinx`. S
 
 You can now find `phinx.yml` in the root directory of your project. Take a look inside it and set up your database credentials.
 
-## Migration files
+## 8.2 Migration files
 
 Generating migration files is really easy, you run the command `php vendor/bin/phing create NameOfYourMigration` and it will generate a file named `YYYYMMDDHHMMSS_name_of_your_migration.php` in the `migrations/` folder unless you change this in the configuration file.
 
@@ -76,13 +76,13 @@ We can now select our `users` table again and apply the changes we want and also
 {lang=php,crop-start-line=7,crop-end-line=21}
 <<(../code/chapter-8/migrations/20150818081646_add_created_at_to_users_table.php)
 
-## Possible data loss on rollbacks
+## 8.3 Possible data loss on rollbacks
 
 Something important to bear in mind when reverting changes is that you do not want to accidentally lose vital information. Say you implement a feature for users to pay for a subscription of some sort in your application and you create a column for storing a timestamp when their subscription expires. If you end up having to rollback this feature after a couple of days and your migration files just simply delete this column you could end up in a situation where you don't know how long a user should have their subscription.
 
 To prevent this you can in your migration scripts either rename columns or tables instead of deleting them or you can copy the data to a temporary table or column. When the rollback is performed you can then manage the data manually since it will be outside of your automated changes to the table or column. More than often I do not encourage doing things manually but this is one occurrence where it really can not be dealt with in an automated way.
 
-## Batches
+## 8.4 Batches
 
 Your application will most likely not be deployed feature by feature, most likely it will be deployed release by release where each release contains one or more features. So a release could consist of more than one migration file, even a single feature could contain more than one. When you deploy and your deploy process automatically applies these changed it will take all the migration files that wasn't included in your latest release and run them against your database. All and well until you want to do a rollback when your latest deploy had multiple migration files because now it will only take the latest migration file and revert the changes in those. The chain of automation is now broken and we need a way of tracking the batches of migration files.
 

@@ -10,7 +10,7 @@ A few weeks went by and suddenly the team started receiving e-mails and phone ca
 
 It now occurred to the team that the pattern followed their release cycle. They worked in two week sprints and deployed every other Monday. It was these Monday's that the problem occurred. Upon this realisation it became quite obvious what caused the issue. When deploying their application they always restarted the *php-fpm* service just in case. When the service restarted, all users who was running an import (a long running PHP process) would get their import canceled because all PHP processes were killed. It now occurred to the team that their deploy process wasn't *atomic*.
 
-## What is atomicity?
+## 4.1 What is atomicity?
 
 What is an atomic deploy? It's all about hiding things from the rest of the world. Let's take a look at one definition:
 
@@ -22,13 +22,13 @@ What we see here is that when an application reaches a critical mass of users an
 
 Perhaps you could ask yourself the question, or at least argue for, that it isn't that big of a deal if the user notices or something unintended happens. I could go along with that to a certain extent. However if you're able to solve it, why not keep your users as happy as possible? Interruptions or unintended behaviour could also cause data corruption that you would have to deal with. If we take a look what the other side of the fence might look like, I would say it's quite bad. That would encompass scheduling, notifying users in advance and take your application offline while deploying. In the long run this will most likely not work out. The obvious example is when you need to deploy an urgent hotfix or when the service scales up.
 
-## Achieving atomicity
+## 4.2 Achieving atomicity
 
 Atomic deploy is when you switch between the previously deployed version and the new one as quick as possible. I'm talking milliseconds or even less, anything slower than that can't be considered atomic. Doing this without your users even noticing is key. Remember the part about making it **appear** instantaneous to the rest of the system? Your application does not need to be very complex or be deployed on an advanced infrastructure, it's enough that somewhere in your process the different parts can come out of sync from each other. Dependencies on packages could get out of sync with your code if the code is updated before dependencies. You also never want to interrupt any current running processes as shown by the example.
 
 There is a few things that usually need to be in order for achieving atomic deploys and I will go through them below. The next chapter will cover deploy tools and there I'll show you how to do this with the various tools.
 
-### Concept of builds
+## 4.3 Concept of builds
 
 Even though we as PHP developers seldom had to consider the concept of builds of our application it's getting more frequent and we must internalize this for achieving atomic deploys. If we can not create a separate build while deploying, it's not possible. Or actually we could do that with a smart infrastructure, shutting down traffic to servers that are in "deploy mode". But for the sake of argument and simplicity we won't go down that route. There is a simple way of doing this on one server; all we need to do is create a build in a folder that is not being served to our users. Then we can do the old switcheroo on the currently deployed build and the *to be* deployed build without the user noticing.
 
@@ -36,7 +36,7 @@ Having an appropriate folder structure for allowing this is simple. I will later
 
 When switching builds you should also save a number of older builds, perhaps the five or ten previous builds. This allows for quick rollbacks and can be crucial if a deploy needs to be reversed. How many you should save is impossible to answer so just go with a number you feel comfortable with, it also depends on your release cycle. If you deploy once a week or once a day you can probably without any discomfort save your five or ten last builds. If you're deploying continuously on every commit then you should probably save a lot more than five.
 
-### File persisted data (shared data)
+## 4.4 File persisted data (shared data)
 
 When switching out a previously deployed build for the new one you must assure that no file persisted data is lost. One example of this is if your application stores session data or user uploaded files inside your application folder. If you switch out the old build for a clean new one, users might be logged out or data could be lost. And this is never an ideal scenario.
 
@@ -44,7 +44,7 @@ On the other hand there could be file persisted data that you do not care if it 
 
 What is important here is to identify the files and/or folders that needs to remain persistent between builds. I refer to these files or folders as **shared data** and I will show how to deal with this in the proposed folder structure.
 
-### Symbolic folder links
+## 4.5 Symbolic folder links
 
 Although it's not really necessary, but to grok symbolic folder links (*symlinks*) is strongly advised. What we want to do with symlinks is also possible by just copying or moving directories. But to make things atomic we should leverage symlinks since they are pretty much instant.
 
@@ -52,7 +52,7 @@ A symlink looks like a folder or a file that appear to exist in a location. But 
 
 For Linux users, it's the [`ln`](http://www.unix.com/man-page/posix/1posix/ln/) command. It's possible on Windows but it's complicated and I suggest doing a Google search for it.
 
-### Proposed folder structure {#atomic-folder-structure}
+## 4.6 Proposed folder structure {#atomic-folder-structure}
 
 The proposed folder structure needs to reside inside a root directory somewhere. Where that is doesn't really matter, it just needs to contain the following structure. How you develop your application is not of importance and this example assumes that the folder structure is on the server serving the application.
 
@@ -83,7 +83,7 @@ The names of the folders inside the root are arbitrary, name them as you please.
 
 **shared/** - any shared data that needs to be persisted between builds will reside here. It can be both files and folders.
 
-### Pseudo deploy process
+## 4.7 Pseudo deploy process
 
 The process for making an atomic deploy is then straight forward:
 
