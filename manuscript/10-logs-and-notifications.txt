@@ -39,6 +39,8 @@ This is possible with any kind of command you can run on your server to capture 
 
 There are a few ways of notifying people, whether that is when things run smoothly or when things go awry. Which type of notification you'll use will likely depend on the current technology your company or teams use for communication. Here are a few examples of channels you can use for notifications.
 
+{pagebreak}
+
 ### E-mail
 
 The most conventional way of sending out notifications is with a good old fashioned e-mail. There are a few upsides to sending notifications through e-mails, one being that you aren't limited to a certain number of characters or lines. You can append full log output in your e-mails for example. One other upside is that everyone has an e-mail address, creating lists and sending notifications to those is a great way of ensuring that people receive and read them. Just make sure that you keep your lists up to date, adding new and removing old people as they come and go.
@@ -57,6 +59,8 @@ The most conventional way of sending out notifications is with a good old fashio
 [email-5]: https://github.com/pboling/capistrano_mailer
 [email-6]: http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Tasks
 
+{pagebreak}
+
 ### Slack
 
 Slack is the rising star of group communication for companies and their teams, for good reasons. Having a channel for your deploys can be a good way of the right people getting notified of relevant information. They have an API which makes it really to send notifications, and there are many plugins that has been built to use it. If a plugin does not exists for your deploy tool you can always use cURL or something similar for sending requests to it.
@@ -72,6 +76,8 @@ Slack is the rising star of group communication for companies and their teams, f
 [slack-2]: https://github.com/j-mcnally/capistrano-slack
 [slack-3]: https://github.com/phallstrom/slackistrano
 [slack-4]: https://github.com/rocketeers/rocketeer-slack
+
+{pagebreak}
 
 ### HipChat
 
@@ -90,6 +96,8 @@ Still a popular alternative even though Slack seems to be taking more and more o
 [hipchat-4]: https://github.com/restorando/capistrano-hipchat
 [hipchat-5]: https://github.com/rocketeers/rocketeer-hipchat
 
+{pagebreak}
+
 ### IRC
 
 The technology that never seems to go out of fashion. It's commonly used and have an impressive track record, it has been around since 1988! The amount of characters you can include in your messages might be a bit limiting though, full log outputs is not to consider here. But a "Deploy successful: [11c287] Fixed bug #215" is often enough as a message.
@@ -105,6 +113,8 @@ The technology that never seems to go out of fashion. It's commonly used and hav
 [irc-2]: https://github.com/ursm/capistrano-notification
 [irc-3]: https://github.com/linyows/capistrano-ikachan
 [irc-4]: https://github.com/Mochaka/rocketeer-irc
+
+{pagebreak}
 
 ## 10.3 Useful git commands
 
