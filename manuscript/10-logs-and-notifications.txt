@@ -43,23 +43,35 @@ There are a few ways of notifying people, whether that is when things run smooth
 
 The most conventional way of sending out notifications is with a good old fashioned e-mail. There are a few upsides to sending notifications through e-mails, one being that you aren't limited to a certain number of characters or lines. You can append full log output in your e-mails for example. One other upside is that everyone has an e-mail address, creating lists and sending notifications to those is a great way of ensuring that people receive and read them. Just make sure that you keep your lists up to date, adding new and removing old people as they come and go.
 
-| Tool       | Plugin                                                                                                                                                           |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Git hooks  | [mail](http://linux.die.net/man/1/mail), [sendmail](http://www.sendmail.org/~ca/email/man/sendmail.html)                                                         |
-| Phing      | [MailTask](https://www.phing.info/docs/guide/trunk/MailTask.html)                                                                                                |
-| Capistrano | [gofullstack/capistrano-notifier](https://github.com/gofullstack/capistrano-notifier), [pboling/capistrano_mailer](https://github.com/pboling/capistrano_mailer) |
-| Rocketeer  | [Write custom task](http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Tasks)                                                                             |
+| Tool       | Plugin                                                                           |
+| ---------- | -------------------------------------------------------------------------------- |
+| Git hooks  | [mail][email-1], [sendmail][email-2]                                             |
+| Phing      | [MailTask][email-3]                                                              |
+| Capistrano | [gofullstack/capistrano-notifier][email-4], [pboling/capistrano_mailer][email-5] |
+| Rocketeer  | [Write custom task][email-6]                                                     |
+
+[email-1]: http://linux.die.net/man/1/mail
+[email-2]: http://www.sendmail.org/~ca/email/man/sendmail.html
+[email-3]: https://www.phing.info/docs/guide/trunk/MailTask.html
+[email-4]: https://github.com/gofullstack/capistrano-notifier
+[email-5]: https://github.com/pboling/capistrano_mailer
+[email-6]: http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Tasks
 
 ### Slack
 
 Slack is the rising star of group communication for companies and their teams, for good reasons. Having a channel for your deploys can be a good way of the right people getting notified of relevant information. They have an API which makes it really to send notifications, and there are many plugins that has been built to use it. If a plugin does not exists for your deploy tool you can always use cURL or something similar for sending requests to it.
 
-| Tool       | Plugin                                                                                                                                             |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Git hooks  | [API](https://api.slack.com/)                                                                                                                      |
-| Phing      | [API](https://api.slack.com/)                                                                                                                      |
-| Capistrano | [j-mcnally/capistrano-slack](https://github.com/j-mcnally/capistrano-slack), [phallstrom/slackistrano](https://github.com/phallstrom/slackistrano) |
-| Rocketeer  | [rocketeers/rocketeer-slack)](https://github.com/rocketeers/rocketeer-slack)                                                                       |
+| Tool       | Plugin                                                                    |
+| ---------- | ------------------------------------------------------------------------- |
+| Git hooks  | [API][slack-1]                                                            |
+| Phing      | [API][slack-1]                                                            |
+| Capistrano | [j-mcnally/capistrano-slack][slack-2], [phallstrom/slackistrano][slack-3] |
+| Rocketeer  | [rocketeers/rocketeer-slack][slack-4]                                     |
+
+[slack-1]: https://api.slack.com/
+[slack-2]: https://github.com/j-mcnally/capistrano-slack
+[slack-3]: https://github.com/phallstrom/slackistrano
+[slack-4]: https://github.com/rocketeers/rocketeer-slack
 
 ### HipChat
 
@@ -67,21 +79,32 @@ Still a popular alternative even though Slack seems to be taking more and more o
 
 | Tool       | Plugin                                                          |
 | ---------- | ------------------------------------ |
-| Git hooks  | [API](https://www.hipchat.com/docs/apiv2)
-| Phing      | [rcrowe/phing-hipchat](https://github.com/rcrowe/phing-hipchat) |
-| Capistrano | [hipchat/hipchat-rb](https://github.com/hipchat/hipchat-rb), [restorando/capistrano-hipchat](https://github.com/restorando/capistrano-hipchat)                                                            |
-| Rocketeer  | [rocketeers/rocketeer-hipchat](https://github.com/rocketeers/rocketeer-hipchat)                                                             |
+| Git hooks  | [API][hipchat-1]
+| Phing      | [rcrowe/phing-hipchat][hipchat-2] |
+| Capistrano | [hipchat/hipchat-rb][hipchat-3], [restorando/capistrano-hipchat][hipchat-4]                                                            |
+| Rocketeer  | [rocketeers/rocketeer-hipchat][hipchat-5]                                                             |
+
+[hipchat-1]: https://www.hipchat.com/docs/apiv2
+[hipchat-2]: https://github.com/rcrowe/phing-hipchat
+[hipchat-3]: https://github.com/hipchat/hipchat-rb
+[hipchat-4]: https://github.com/restorando/capistrano-hipchat
+[hipchat-5]: https://github.com/rocketeers/rocketeer-hipchat
 
 ### IRC
 
 The technology that never seems to go out of fashion. It's commonly used and have an impressive track record, it has been around since 1988! The amount of characters you can include in your messages might be a bit limiting though, full log outputs is not to consider here. But a "Deploy successful: [11c287] Fixed bug #215" is often enough as a message.
 
-| Tool       | Plugin                                                                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Git hooks  | [Send message to IRC channel from bash](http://serverfault.com/questions/183157/send-message-to-irc-channel-from-bash)                                       |
-| Phing      | [Send message to IRC channel from bash](http://serverfault.com/questions/183157/send-message-to-irc-channel-from-bash)                                       |
-| Capistrano | [ursm/capistrano-notification](https://github.com/ursm/capistrano-notification), [linyows/capistrano-ikachan](https://github.com/linyows/capistrano-ikachan) |
-| Rocketeer  | [Mochaka/rocketeer-irc](https://github.com/Mochaka/rocketeer-irc)                                                                                            |
+| Tool       | Plugin                                                                     |
+| ---------- | -------------------------------------------------------------------------- |
+| Git hooks  | [Send message to IRC channel from bash][irc-1]                             |
+| Phing      | [Send message to IRC channel from bash][irc-1]                             |
+| Capistrano | [ursm/capistrano-notification][irc-2], [linyows/capistrano-ikachan][irc-3] |
+| Rocketeer  | [Mochaka/rocketeer-irc][irc-4]                                             |
+
+[irc-1]: http://serverfault.com/questions/183157/send-message-to-irc-channel-from-bash
+[irc-2]: https://github.com/ursm/capistrano-notification
+[irc-3]: https://github.com/linyows/capistrano-ikachan
+[irc-4]: https://github.com/Mochaka/rocketeer-irc
 
 ## 10.3 Useful git commands
 
