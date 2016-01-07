@@ -103,7 +103,7 @@ One important point to make here is that being able to continuously deploy is li
 
 Technical debt and software rot is something well known and talked about in the developer community, but the concepts can be applied to more than code. We should take care of our deployment just as much as our code. When an ad-hoc deployment process is put in place we immediately start hoarding technical debt and when it starts to rot  we have **shipping rot**. The problem with this kind of debt and rot is that it's more than usually exponential and self enforcing. Have you heard of the [broken window theory](http://en.wikipedia.org/wiki/Broken_windows_theory)? The TL;DR version is: when people see that a building has a broken window, they stop caring less about maintaining it and into the spiral it goes. This applies perfectly to software development where legacy code stays legacy and bad code breeds more bad code. The same goes for our deployment process: a bad process will stay bad or get worse. If you can stop that first window from breaking or quickly repair it, everyone else will care for that it stays that way. Having goals set is a great tool for quickly dealing with that broken window and if you at some point realize that there are many broken windows, you should perhaps fix them all in one big swoop.
 
-## 2.7 The list
+## 2.7 The list {#goals-list}
 
 We can condense the goals in to a bullet list since everybody likes a clear and concise list, right? When reading the list, try to reflect on where you currently are at the different goals.
 
