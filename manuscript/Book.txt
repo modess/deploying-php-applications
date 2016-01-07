@@ -10,3 +10,5 @@
 6-version-control.txt
 7-dependencies.txt
 8-database-migrations.txt
+9-running-tests.txt
+10-logs-and-notifications.txt
