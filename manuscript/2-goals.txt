@@ -78,7 +78,7 @@ Say you deploy your application to a VPS with limited resources and no real opti
 
 You can write how much code you like, but if you're not shipping any of it you're not contributing with any value. You and your team should have a goal of how often you want to release code. Whether it be once every month or four times a day, as long as you have a goal and a plan for it. If you do not have a goal for it you can't reach something. So set a goal if you do not have one and try to get there. Knowing your current and your wanted release cycle is important for planning your deployment process.
 
-> By "shipping code" I refer to deploying it, from finishing a feature in your local environment to getting it out to the production server(s).
+I> By "shipping code" I refer to deploying it, from finishing a feature in your local environment to getting it out to the production server(s).
 
 There are a few ways in which we ship code and the different models of it can be summed up to:
 
