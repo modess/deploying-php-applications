@@ -23,7 +23,7 @@
     </target>
 
     <target name="link-build" description="Link new build">
-        <symlink target="${project.basedir}/builds/${TSTAMP}/app/storage" link="latest" overwrite="true" />
+        <symlink target="${project.basedir}/builds/${TSTAMP}" link="latest" overwrite="true" />
     </target>
 
     <target name="clean-old-builds">
