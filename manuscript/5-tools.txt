@@ -329,11 +329,17 @@ This tool has been around for a very long time, according to their changelog the
 
 I would suggest that you install it through Composer. You can do this by either running (replace composer with how you access your composer binary)
 
+{lang=json}
+~~~
 composer require "phing/phing:2.*"
+~~~
 
 or adding
 
+{lang=json}
+~~~
 "phing/phing": "2.*"
+~~~
 
 to your required dependencies in `composer.json` and running `composer update`. Sweet and simple as that. You now have your `phing` binary in the directory `vendor/bin/`, which I suggest you to always have in your path.
 
