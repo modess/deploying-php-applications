@@ -323,7 +323,7 @@ The less good parts are:
 
 ## 5.2 Phing
 
-This tool has been around for a very long time, according to their changelog the initial pre-release was in October 2002. Which is an eon in internet time. You can find it on [its website](http://www.phing.info/). It's based on Apache's [Ant](http://ant.apache.org/) tool which is a build tool built in Java. You can probably already tell that since it's very old and based on a Java tool that it's not cutting edge. The strength is that it has been around for a very long time and with that comes stability and maturity. Actually the "preferred method" of installation is through PEAR according to their official documentation, and that's not a good sign. But it can be installed through Composer as well, which it should be and the documentation cover this.
+This tool has been around for a very long time, according to their changelog the initial pre-release was in October 2002 which is an eon in internet time. You can find it on [its website](http://www.phing.info/). It's based on Apache's [Ant](http://ant.apache.org/) tool which is a build tool built in Java. You can probably already tell that since it's very old and based on a Java tool that it's not cutting edge. Even though it's based on Ant, it's written in PHP and has taken its inspiration for configuration from Ant. The strength is that it has been around for a very long time and with that comes stability and maturity. Actually the "preferred method" of installation is through PEAR according to their official documentation, and that's not a good sign. But it can be installed through Composer as well, which it should be and the documentation cover this.
 
 ### Installation
 
@@ -334,14 +334,7 @@ I would suggest that you install it through Composer. You can do this by either 
 composer require "phing/phing:2.*"
 ~~~
 
-or adding
-
-{lang=json}
-~~~
-"phing/phing": "2.*"
-~~~
-
-to your required dependencies in `composer.json` and running `composer update`. Sweet and simple as that. You now have your `phing` binary in the directory `vendor/bin/`, which I suggest you to always have in your path.
+You now have your `phing` binary in the directory `vendor/bin/`, which I suggest you to always have in your path.
 
 However there might be reasons for you not being able to install it through Composer. In this very unlikely event you can download the [Phar archive](http://www.phing.info/get/phing-latest.phar) and put it in the root of your repository. You can then use this to run Phing with `php phing-latest.phar`.
 
@@ -353,7 +346,7 @@ It uses build files that are written in XML which is a format developers have be
 
 A valid build file must contain a few elements. First of all it must contain only one root element called `<project>` and everything in your build file goes inside this element. Then it must contain several *type* elements such as `<property>`, `<fileset>`, `<patternset>`, etc. And it also must contain one or more `<target>` elements.
 
-Start by creating the file `build.xml` and adding a appropriate XML header:
+Start by creating the file `build.xml` and adding an appropriate XML header:
 
 {lang=xml}
 ~~~
@@ -608,14 +601,14 @@ All that is left is to run the Phing binary.
 The good parts are:
 
 * Tested and stable
+* Written in PHP
 * Abundance of predefined tasks
 * Create your own tasks in PHP
 * Dependencies between targets
 
 The less good parts are:
 
-* Written in Java
-* Build files are written in XML
+* Build files and configuration in XML
 
 {pagebreak}
 
