@@ -4,7 +4,7 @@ This is not a book about version control, neither will this chapter go into how 
 
 As said before, Git will be used as a reference in this chapter. But the concepts can probably be applied to most version control systems if you're able to create branches. Why Git is so beneficial in a branching strategy is because of its low overhead for those operations. Branching and merging is mostly fast and simple. Conflicts will arise in all systems.
 
-The overhead in Git when you branch is minimal, we're talking around **4 kilobytes**! And creating a branch takes a few milliseconds of your life. I'm pretty sure no other major version control system can contest that. If you are interested in how this is possible, I'll provide some resources for further learning on Git.
+The overhead in Git when your branch is minimal, we're talking around **4 kilobytes**! And creating a branch takes a few milliseconds of your life. I'm pretty sure no other major version control system can contest that. If you are interested in how this is possible, I'll provide some resources for further learning on Git.
 
 And why is version control important for your deployment process? You might ask. It comes down to being able to get code to its proper places. With a good version control system and a workflow, you can choose what you push code to the different environments. And for this you use a branching strategy. I will propose one in this chapter and I'm not saying that's the one you have to use. There are many strategies out there and you should try to find one that fits you and your team.
 
