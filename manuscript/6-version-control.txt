@@ -28,7 +28,7 @@ This is the branch you have in your production environment. It should always be 
 
 ### Develop branch
 
-Your develop branch is where all deployable code should be merged to. This is a branch for testing your code before it gets merged into *master*. Once code is in the *develop* it can be pushed to different environments so it can be tested thoroughly. Perhaps you have a QA-person/team that can test your features with manual and/or automated regression tests. But it should also pass some sort of automated testing (continuos integration) like Jenkins or Travis. Our your fellow developer colleagues could test it in a shared environment.
+Your develop branch is where all deployable code should be merged to. This is a branch for testing your code before it gets merged into *master*. Once code is in the *develop* it can be pushed to different environments so it can be tested thoroughly. Perhaps you have a QA-person/team that can test your features with manual and/or automated regression tests. But it should also pass some sort of automated testing (continuos integration) like Jenkins or Travis. And your fellow developer colleagues could test it in a shared environment.
 
 The code here should be stable enough to be merged in to master at any point. But of course bugs will be spotted and dealt with and that's the whole point of this branch. You want your code as tested as possible so you can merge it into master and deploy it into production. You want to be able to do this with as little uncertainty as possible.
 
