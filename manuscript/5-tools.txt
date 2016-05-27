@@ -288,7 +288,7 @@ It's a simple example but it serves well as a boilerplate set up for atomic depl
 
 ### Output and logs
 
-If you have tried any of the examples, you noticed a wonderful thing. The remote will send back the output of the running hook to you when doing a push. This allows you to follow along with exactly what is happening in the push.
+If you have tried any of the examples, you noticed a wonderful thing. The remote will send back the output of the running hook to you when doing a push. This allows you to follow along exactly what is happening in the push.
 
 What I tend to prefer is to save all the output to a log file as well, having a deploy log is great for debugging purposes. This is how you in a very easy way can add logging for your hooks, just add it to the top of your hook:
 
