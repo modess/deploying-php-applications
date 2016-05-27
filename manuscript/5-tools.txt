@@ -622,7 +622,7 @@ I> ### Web server document root
 I>
 I> Since Capistrano uses **current** as a symbolic link to the current deploy, we need our web server to use that as the document root.
 
-How it works is that you add your environments and servers in the configuration files for Capistrano, then you add tasks that should be performed on these different environments and server. After that you can easily execute the tasks remotely over safe and secure SSH connections. This was you can manage your deploy process from your own familiar command line on your computer.
+How it works is that you add your environments and servers in the configuration files for Capistrano, then you add tasks that should be performed on these different environments and server. After that you can easily execute the tasks remotely over safe and secure SSH connections. This way you can manage your deploy process from your own familiar command line on your computer.
 
 You could also use it as a basic way of performing tasks on your servers that are not deploy related, since you can execute arbitrary commands over SSH on multiple servers at the same time. Want to get the memory usage on all your database production servers? Add a task to do this and capture the output from all your servers in one go. However this is not a book on infrastructure orchestration or provisioning, so we'll focus on deploying your PHP application with it.
 
