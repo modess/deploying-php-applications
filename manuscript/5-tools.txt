@@ -439,7 +439,7 @@ I> We should use *<![CDATA[ ... ]]>* so we don't have to quote entities within t
 
 #### Properties
 
-We have to option to define property elements in our build file which later can be referenced, you could see them as variables. These can be defined and we can tell them through an attribute that we want the option to be able to override them. If we say that we're allowed to override a property, then we can specify the property value through the command line when running Phing.
+We have the option to define property elements in our build file which later can be referenced, you could see them as variables. These can be defined and we can tell them through an attribute that we want the option to be able to override them. If we say that we're allowed to override a property, then we can specify the property value through the command line when running Phing.
 
 If we go back to our example of greeting someone in the build, we can get a good demonstration of properties at work. First we define a property of whom we want to greet, this is done inside the *project* element.
 
