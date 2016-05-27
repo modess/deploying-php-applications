@@ -20,7 +20,7 @@ Some tools have adopted it too. One of the most popular Git clients, [SourceTree
 
 ## 6.2 Main branches
 
-There are two branches that has to exists in order for git-flow to work. These are your main branches and serves two different purposes. They are called *master* and *develop*. When converting a repository for git-flow you will end up with these branches. You can name them whatever you want, but I will refer to them as their original names.
+There are two branches that have to exist in order for git-flow to work. These are your main branches and serves two different purposes. They are called *master* and *develop*. When converting a repository for git-flow you will end up with these branches. You can name them whatever you want, but I will refer to them as their original names.
 
 ### Master branch
 
