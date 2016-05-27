@@ -24,7 +24,7 @@ There are two branches that have to exist in order for git-flow to work. These a
 
 ### Master branch
 
-This is the branch you have in your production environment. It should always be stable and deployable. I'm trying to come up with some other things to say about it, but there is nothing more to it actually. The code here is the face of your application towards its users.
+This is the branch you have in your production environment. It should always be stable and deployable. I'm trying to come up with some other things to say about it, but there is nothing more to it actually. The code here is the face of your application that its users see.
 
 ### Develop branch
 
