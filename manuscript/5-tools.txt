@@ -669,7 +669,7 @@ set :repo_url, 'https://github.com/modess/deploy-test-application.git'
 leanpub-end-insert
 ~~~
 
-Capistrano now knows what our application is called and where to locate the remote repository. The remote repository is where is will pull code from when deploying. We'll also change the path of where to deploy it, and we'll stick to our regular path for examples: `/var/www/app`.
+Capistrano now knows what our application is called and where to locate the remote repository. The remote repository is where it will pull code from while deploying. We'll also change the path of where to deploy it, and we'll stick to our regular path for examples: `/var/www/app`.
 
 {lang="ruby"}
 ~~~
