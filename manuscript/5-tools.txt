@@ -288,7 +288,7 @@ It's a simple example but it serves well as a boilerplate set up for atomic depl
 
 ### Output and logs
 
-If you have tried any of the examples, you noticed a wonderful thing. The remote will send back the output of the running hook to you when doing a push. This allows for you to follow along with exactly what is happening in the push.
+If you have tried any of the examples, you noticed a wonderful thing. The remote will send back the output of the running hook to you when doing a push. This allows you to follow along exactly what is happening in the push.
 
 What I tend to prefer is to save all the output to a log file as well, having a deploy log is great for debugging purposes. This is how you in a very easy way can add logging for your hooks, just add it to the top of your hook:
 
@@ -414,7 +414,7 @@ This is where it gets interesting. The official documentation have this to say o
 
 Which is really cool. This means that we can define tasks in our build that is executing PHP code. Let's stop for a second here and take a step back to look at what this offers us. First of all this allows us to **integrate our application with our deploy**. We could write build tasks in our application under a certain namespace, with this we get a deep integration where we could achieve really cool stuff. Whether it be busting caches through our actual application or building static assets with your favorite Composer package for that. Second of all, it allows us to **write tests for our build**. We could write tests that cover the entire build!
 
-I digress a bit from the tool at hand, so let's go back to tasks. The way tasks are defined differs a bit from the other elements. Where others have a fixed element name (*\<project /\>* and *\<target /\>*), tasks are a bit more dynamic. The element will instead be defined based on the name of the task. If we have a task that will clear our application cache, it might perhaps be defined as `<clear-application-cache />`. Phing provides you with a good amount of core tasks you can used and then you are free to create your own ones. Let's create a simple greet-task using the *AdhocTaskdefTask* provided by Phing for creating our own tasks inside the build file.
+I digress a bit from the tool at hand, so let's go back to tasks. The way tasks are defined differs a bit from the other elements. Where others have a fixed element name (*\<project /\>* and *\<target /\>*), tasks are a bit more dynamic. The element will instead be defined based on the name of the task. If we have a task that will clear our application cache, it might perhaps be defined as `<clear-application-cache />`. Phing provides you with a good amount of core tasks you can use and then you are free to create your own ones. Let's create a simple greet-task using the *AdhocTaskdefTask* provided by Phing for creating our own tasks inside the build file.
 
 When defining a custom task, we need to create a class that extends `Task`. We can then define attributes to be passed in and create setters for them. In the example below we will use a *recipient* attribute to tell our task who we want to greet:
 
@@ -439,7 +439,7 @@ I> We should use *<![CDATA[ ... ]]>* so we don't have to quote entities within t
 
 #### Properties
 
-We have to option to define property elements in our build file which later can be referenced, you could see them as variables. These can be defined and we can tell them through an attribute that we want the option to be able to override them. If we say that we're allowed to override a property, then we can specify the property value through the command line when running Phing.
+We have the option to define property elements in our build file which later can be referenced, you could see them as variables. These can be defined and we can tell them through an attribute that we want the option to be able to override them. If we say that we're allowed to override a property, then we can specify the property value through the command line when running Phing.
 
 If we go back to our example of greeting someone in the build, we can get a good demonstration of properties at work. First we define a property of whom we want to greet, this is done inside the *project* element.
 
@@ -622,7 +622,7 @@ I> ### Web server document root
 I>
 I> Since Capistrano uses **current** as a symbolic link to the current deploy, we need our web server to use that as the document root.
 
-How it works is that you add your environments and servers in the configuration files for Capistrano, then you add tasks that should be performed on these different environments and server. After that you can easily execute the tasks remotely over safe and secure SSH connections. This was you can manage your deploy process from your own familiar command line on your computer.
+How it works is that you add your environments and servers in the configuration files for Capistrano, then you add tasks that should be performed on these different environments and server. After that you can easily execute the tasks remotely over safe and secure SSH connections. This way you can manage your deploy process from your own familiar command line on your computer.
 
 You could also use it as a basic way of performing tasks on your servers that are not deploy related, since you can execute arbitrary commands over SSH on multiple servers at the same time. Want to get the memory usage on all your database production servers? Add a task to do this and capture the output from all your servers in one go. However this is not a book on infrastructure orchestration or provisioning, so we'll focus on deploying your PHP application with it.
 
@@ -669,7 +669,7 @@ set :repo_url, 'https://github.com/modess/deploy-test-application.git'
 leanpub-end-insert
 ~~~
 
-Capistrano now knows what our application is called and where to locate the remote repository. The remote repository is where is will pull code from when deploying. We'll also change the path of where to deploy it, and we'll stick to our regular path for examples: `/var/www/app`.
+Capistrano now knows what our application is called and where to locate the remote repository. The remote repository is where it will pull code from while deploying. We'll also change the destination path, and we'll stick to our regular path for examples: `/var/www/app`.
 
 {lang="ruby"}
 ~~~
@@ -918,7 +918,7 @@ Our application is now deployed, but there are some more concepts that Rocketeer
 
 ### Tasks
 
-For the example application, we actually have a full fledged deploy process. But there is a core concept in Rocketeer I want to discuss anyway because it's central to how the tool work, this is **tasks**. It's a term they've chosen to use and they are used for executing steps inside your deploy process. They can be either one line commands such as `composer install`, or they can be closures that allows for you to write an inline style of task, or they can be separate classes. Most of the predefined features you're presented with is tasks written for the core.
+For the example application, we actually have a full fledged deploy process. But there is a core concept in Rocketeer I want to discuss anyway because it's central to how the tool works, this is **tasks**. It's a term they've chosen to use and they are used for executing steps inside your deploy process. They can be either one line commands such as `composer install`, or they can be closures that allow you to write an inline style of task, or they can be separate classes. Most of the predefined features you're presented with is tasks written for the core.
 
 This allows us to easily extend or write new functionality to our deploy process that we can hook into at the points we want in the process, tailoring it for our applications needs. If you're more interested in how the event system works and what hooks are available, read more about it in the [events documentation](http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Events). And if you're more interested in tasks and what you are able to do with them you should read the [tasks documentation](http://rocketeer.autopergamene.eu/#/docs/docs/II-Concepts/Tasks).
 
