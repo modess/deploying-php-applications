@@ -167,7 +167,7 @@ chmod +x .git/hooks/post-receive
 Now it exists and is executable. Let's add all the commands that will update the repository.
 
 {lang=bash}
-<<(../code/chapter-5/post-receive)
+<<(code/chapter-5/post-receive)
 
 As I mentioned earlier, it changes the current working directory and unsets the `GIT_DIR` environment variable for consistency. Then it does a hard reset of the repository and forces a checkout of the latest commit. This ensures that our other hook will have the correct state to work with.
 
@@ -212,7 +212,7 @@ chmod +x .git/hooks/post-receive
 And adding the necessary commands for updating the repository on a push:
 
 {lang=bash}
-<<(../code/chapter-5/post-receive)
+<<(code/chapter-5/post-receive)
 
 And we create the *post-update* hook:
 
@@ -254,34 +254,34 @@ Now we can push to the correct location and trigger the hooks when we push. So l
 We need to be aware of the different paths that we have set up so we can perform things based on that. So we create a few variables for dealing with that. Then we also save the date in a variable for creating folder names.
 
 {lang=bash,crop-start-line=5,crop-end-line=12}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 After all this, we can add the command for updating our dependencies. Any command can be added here that you need for building your application, but we will stick with this simple example for now:
 
 {lang=bash,crop-start-line=14,crop-end-line=15}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 Now we should remove any shared folders inside our application and replace them with symbolic links to the *shared* folder. Let's assume this is a Laravel application and we need to keep `app/storage` persistent through builds.
 
 {lang=bash,crop-start-line=17,crop-end-line=19}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 Now we have our complete build that we should copy to `builds/` and create or change the `latest/` symbolic link to point to it.
 
 {lang=bash,crop-start-line=21,crop-end-line=25}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 And finally we do some clean up, you only want to keep your latest 5 builds.
 
 {lang=bash,crop-start-line=27,crop-end-line=29}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 Congratulations, you now have a fully functional atomic deploy!
 
 I will end by showing you the complete *post-update* hook here and what it looks like:
 
 {lang=bash}
-<<(../code/chapter-5/post-update)
+<<(code/chapter-5/post-update)
 
 W> ### More or fewer than 5 builds?
 W>
@@ -381,7 +381,7 @@ So now let's add a *project* element to your build file
 There can be one or many target elements, and they can depend on each other. This is great for preparing certain scenarios. Example: Let's say that you want to dump your database and move the dump somewhere, then you would make a target for dumping the database and a target for moving the dump that depends on the target for dumping.
 
 {lang=xml}
-<<(../code/chapter-5/targets.xml)
+<<(code/chapter-5/targets.xml)
 
 If you would run `phing` now nothing would really happen since we only have comments in the targets, but you should get a output showing that the build file was used and the targets where executed in the right order. Notice that we receive a waning that our target has no tasks or dependencies though:
 
@@ -422,7 +422,7 @@ I digress a bit from the tool at hand, so let's go back to tasks. The way tasks 
 When defining a custom task, we need to create a class that extends `Task`. We can then define attributes to be passed in and create setters for them. In the example below we will use a *recipient* attribute to tell our task who we want to greet:
 
 {lang=xml}
-<<(../code/chapter-5/tasks.xml)
+<<(code/chapter-5/tasks.xml)
 
 We can now execute this with `phing greet` and we should see a proper output for it:
 
@@ -566,27 +566,27 @@ We can think of targets as certain states we need our process to be in before pr
 Each and one of these will have a target and we want them to be done in a synchronous manner because they always depend on the previous targets' state. Creating a build in this context will be just updating the dependencies in our *repository/* folder.
 
 {lang=xml,crop-start-line=5,crop-end-line=9}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 After that we want to copy our build to the *builds* folder. We'll use the convention of named our build with the current timestamp for easier reference, so we'll create a property called *TSTAMP* that we can use to copy and reference our build from. Phing has a [TstampTask](https://www.phing.info/docs/guide/trunk/TstampTask.html) we'll use.
 
 {lang=xml,crop-start-line=11,crop-end-line=19}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 So now we want to link our shared data in the build. Again we assume that we store persisted data in `app/storage` inside the application, and have a `shared/storage` folder for that. Lucky for us, there's a task in Phing called [SymlinkTask](https://www.phing.info/docs/guide/trunk/SymlinkTask.html) that we can use.
 
 {lang=xml,crop-start-line=21,crop-end-line=23}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 This leaves us with a complete build of the application with shared data prepared. All we need to do now is to serve it to the users. That's just a matter of updating the symlink *latest* that the web server has as document root.
 
 {lang=xml,crop-start-line=25,crop-end-line=27}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 We only have a final step to complete now. To not save infinite number of builds, it's time for some cleanup. We'll use the same bash command as we did for the git hook atomic deploy and put it inside Phing.
 
 {lang=xml,crop-start-line=29,crop-end-line=31}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 T> ### More or fewer than 5 builds?
 T>
@@ -595,7 +595,7 @@ T> We are using `rm -rf $(ls -1t | tail -n +6)` in this example. This will save 
 All steps, as targets, necessary are in place to make an atomic build now. We just have to put them all together in order. The default target in our build file is *dist*, so we create that and append all targets as dependencies to it. Here is the build file in its entirety.
 
 {lang=xml}
-<<(../code/chapter-5/buildfile.xml)
+<<(code/chapter-5/buildfile.xml)
 
 All that is left is to run the Phing binary.
 

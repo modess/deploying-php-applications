@@ -67,10 +67,10 @@ $databaseHost = $_ENV['DATABASE_HOST'];
 $databaseHost = $_SERVER['DATABASE_HOST'];
 ~~~
 
-I recommend using `getenv()` or even better writing a wrapper function that allows you to pass a default value if the configuration value isn't set (inspired by Laravel´s [env()](https://github.com/laravel/framework/blob/a1dc78820d2dbf207dbdf0f7075f17f7021c4ee8/src/Illuminate/Foundation/helpers.php#L626) function).
+I recommend using `getenv()` or even better writing a wrapper function that allows you to pass a default value if the configuration value isn't set (inspired by Laravel's [env()](https://github.com/laravel/framework/blob/a1dc78820d2dbf207dbdf0f7075f17f7021c4ee8/src/Illuminate/Foundation/helpers.php#L626) function).
 
 {lang="php"}
-<<(../code/chapter-3/env-function.php)
+<<(code/chapter-3/env-function.php)
 
 This allows you to fetch a configuration value or get a default value
 

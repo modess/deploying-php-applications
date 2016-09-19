@@ -42,7 +42,7 @@ These two methods is where you put your intended changes to the database. `up()`
 We can now start to adding our changes to the migration file. Let's create that user table I've been going on and on about, it would look like this.
 
 {lang=php,crop-start-line=7,crop-end-line=21}
-<<(../code/chapter-8/migrations/20150817080530_create_users_table.php)
+<<(code/chapter-8/migrations/20150817080530_create_users_table.php)
 
 A simple table with names `users` than contains string columns for e-mail and password that can't be null. It also adds a unique index for the e-mail column since our database should never be able to store multiple users with the same e-mail. When we revert this change we simply drop the table.
 
@@ -74,7 +74,7 @@ At this point we realize we want to keep track of when each user was created, so
 We can now select our `users` table again and apply the changes we want and also provide a revert where we simply drop the column.
 
 {lang=php,crop-start-line=7,crop-end-line=21}
-<<(../code/chapter-8/migrations/20150818081646_add_created_at_to_users_table.php)
+<<(code/chapter-8/migrations/20150818081646_add_created_at_to_users_table.php)
 
 ## 8.3 Possible data loss on rollbacks
 
