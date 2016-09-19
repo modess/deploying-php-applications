@@ -147,6 +147,9 @@ If we commit something now in our local environment we can push it to our remote
 
 git push production master
 
+T> ### Git remote on non-standard port?
+T>
+T> The syntax for adding a remote that does not use the default git port is kind of strange. It's `git remote add <remote name> ssh://<user>@<yourhost>:<port>/<path>`. To me it looks a bit confusing, but it works with absolute paths. It will not work with relative paths.
 
 #### Set up the hooks
 
