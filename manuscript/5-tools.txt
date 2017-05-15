@@ -802,6 +802,7 @@ Just as Capistrano this tools treats deploys atomically and has an almost identi
 
 There are two good ways of installing the tool, either downloading the *phar* or installing it through Composer. I'm always a fan of using Composer so I would recommend installing it that way:
 
+{lang=bash}
 ~~~
 composer require anahkiasen/rocketeer --dev
 ~~~
