@@ -789,11 +789,11 @@ The less good parts are:
 
 {pagebreak}
 
-## 5.4 Rocketeer
+## 5.4 Rocketeer{#rocketeer}
 
 If you want a tool that is tightly integrated with PHP, fast, modern and easy to use, this could be the tool you're looking for. It has taken many proven concepts from predecessors and made it into a tool worthy of modern development and deployment. It is coded in PHP but it can manage deploying any type of application. It provides a powerful set of features that is probably enough for many applications, but it is also based on a modular approach that enables you to swap, extend or hack parts to fit your particular need if necessary.
 
-It has a very interesting philosophy while being heavy influenced and dependant on the Laravel framework, it has many `illuminate/*` dependencies which is core Laravel packages. Through this it's able to leverage a lot of power for configuration, events, remote execution, cli among other things. There is also a focus on readability and simplicity for the API it provides.
+It has a very interesting philosophy while being heavy influenced and dependent on the Laravel framework, it has many `illuminate/*` dependencies which is core Laravel packages. Through this it's able to leverage a lot of power for configuration, events, remote execution, cli among other things. There is also a focus on readability and simplicity for the API it provides.
 
 Just as Capistrano this tools treats deploys atomically and has an almost identical folder structure at the remote deploy locations. While we have to mimic this functionality manually with git hooks or Phing, we don't have to worry about it here. Other than it allows us to manage things in multiples; multiple servers, multiserver connections and multiple stages per server.
 
