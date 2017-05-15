@@ -973,3 +973,46 @@ The good parts are pretty similar to Capistrano, but with a few added benefits:
 The less good parts are:
 
 * No obvious ones really if you're a PHP developer
+
+{pagebreak}
+
+## 5.5 Deployer
+
+The flow and intuity of [Deployer's](http://deployer.org/) interface makes me very excited about it. It's written in PHP and is sporting all the good stuff that you'd expect from a modern tool. This includes support for multiple servers and stages, deployment in parallel, atomic deployment and on top of that: it's fast. What I really enjoy about it is the fluent way you define your process in it, it provides a smooth and enjoyable experience. And in some cases everything works out of the box with their *recipes* available for a few frameworks.
+
+One could argue that the simplicity of the tool is what might make it suffer in some cases. It revolves around one file, a `deploy.php` file in your project's root directory. You could include other files in that, making your own folder structure for your process; and this could be seen as both a plus or a minus. It provides you with flexibility, but leaves a lack of structure and common practices. This becomes obvious when you compare it with [Rocketeer](#rocketeer) for example, that has a very defined and opinionated structure.
+
+It has been around for a few years and have reached maturity and stability. As of writing this the maintainers are actively working on the tool and updating it on a regular basis, it also have a solid contributor foundation.
+
+### Installation
+
+My preferred way of installation is always through Composer when available, and that holds true for Deployer. Install it in your project or globally by requiring the package.
+
+{lang=bash}
+~~~
+# Local
+composer require deployer/deployer --dev
+
+# Global
+composer global require deployer/deployer
+~~~
+
+Then if you have your PATH configured correctly you can run the binary through:
+
+{lang=bash}
+~~~
+dep
+~~~
+
+### Configuring
+
+Start off by initializing it for your project, do this in the root folder of the project.
+
+{lang=bash}
+~~~
+dep init
+~~~
+
+You will be prompted if you want to use one of the recipes provided by the tool, choose one if applicable or go with the *common* one. I went with the *composer* recipe since I'll be deploying my [deploy test application](https://github.com/modess/deploy-test-application) which has Composer dependencies and a storage folder.
+
+A `deploy.php` have now been generated in the root of the project, take a quick look at it if you wish. You can already tell the fluent and nice interface the tool have for structuring your deployment process.
