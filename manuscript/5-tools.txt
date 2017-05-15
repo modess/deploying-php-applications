@@ -735,7 +735,9 @@ INFO [c8e8e7be] Running /usr/bin/env composer install --no-dev --prefer-dist --n
 
 Either your application is working now or it is crashing due to the fact that it's not allowed to write to the `storage/` directory in the application. We start by installing the file permission plugin for Capistrano on our system
 
+~~~
 gem install capistrano-file-permissions
+~~~
 
 We then require it in our `Capfile` and use it to set proper permissions
 
