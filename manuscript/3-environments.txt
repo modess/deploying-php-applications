@@ -148,7 +148,7 @@ There are a few things that are essential for having success with test environme
 
 ## 3.8 Simplify server access
 
-In the process of managing multiple servers you end up wanting to make the access to the them faster and easier. First of all creating host entries for your various servers will remove the need of looking up IP addresses. For some servers you won't need it since they will be publicly accessible through domains such as your production environment. But even for your production environment you might have servers for databases, load balancers, caches, etc and they might not be accessible through a public domain. But you will still need to access them on a regular basis for maintenance and debugging so create host entries for them.
+In the process of managing multiple servers you end up wanting to make access to them faster and easier. First of all creating host entries for your various servers will remove the need of looking up IP addresses. For some servers you won't need it since they will be publicly accessible through domains such as your production environment. But even for your production environment you might have servers for databases, load balancers, caches, etc and they might not be accessible through a public domain. But you will still need to access them on a regular basis for maintenance and debugging so create host entries for them.
 
 The second thing is setting up and maintaining your SSH configuration file. In this you can manage hosts, hostnames, keys, ports and everything else you need to simplify your access to the servers. Compare these commands and you'll realize that you can gain a lot by this:
 
