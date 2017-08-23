@@ -20,7 +20,7 @@ You can now find `phinx.yml` in the root directory of your project. Take a look 
 
 ## 8.2 Migration files
 
-Generating migration files is really easy, you run the command `php vendor/bin/phing create NameOfYourMigration` and it will generate a file named `YYYYMMDDHHMMSS_name_of_your_migration.php` in the `migrations/` folder unless you change this in the configuration file.
+Generating migration files is really easy, you run the command `php vendor/bin/phinx create NameOfYourMigration` and it will generate a file named `YYYYMMDDHHMMSS_name_of_your_migration.php` in the `migrations/` folder unless you change this in the configuration file.
 
 All migration will end up in files that extends `Phinx\Migration\AbstractMigration` and will initially consist of a `change()` method only. This is a behavior that was introduced in version *0.2.0* of Sphinx and I do not like it. The reason being that it introduces magic in our migrations by trying to guess how to revert changes and leaves you with no option of modifying that, also it only works with a certain set of operations. I prefer the old fashioned way of using `up()` and `down()` since it enables us to be flexible and I will in the next section continue my reasoning on this. So I always start with replacing the contents of my newly generated migration file with:
 
