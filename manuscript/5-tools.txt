@@ -8,7 +8,7 @@ What a tool provides for us is a way of gathering related parts of our deploy in
 
 Most tools do an excellent job in separating your environments. They make it easy to make every deploy to any environment repeatable. Perhaps you don't want to minify your Javascript and CSS files when you deploy to a testing environment? This makes debugging easier. But when you deploy to the staging or production environment you should do it. The tools will help you run the commands you want, when you want and where you want. Some of them also make sure that every person deploying have the correct endpoints to the environments for the deploys.
 
-I'll below cover a few of the common tools. They all have their pros and cons as with everything when it comes to technology. I won't tell you if one tool is better than another because it's a matter of taste and what works best for you and your application. With each tool I'll provide a cookbook on how to automate builds and how to get started with them, it'll provide a template for you to extend and customize for the needs of your application. However they are ordered by which I prefer based on my experience with them and my general opinion of them, in an ascending order. I'll start with the most basic ones where you'll have to work out a few things on your own, such as atomic deployment. The sections on each tool will get shorter and shorter as you will be able to tell and that is because the later tools will solve many common practices for you so you don't have to. If you're looking for a modern tool aimed at PHP applications I suggest you skip to [Rocketeer](#rocketeer) or [Deployer](#deployer) straight away. If you however want to understand the fundamentals of what these tools solve for you, you should follow along with all the tools to get a better understanding of some more low level concepts.
+I'll below cover a few of the common tools. They all have their pros and cons as with everything when it comes to technology. I won't tell you if one tool is better than another because it's a matter of taste and what works best for you and your application. With each tool I'll provide a cookbook on how to automate builds and how to get started with them, it'll provide a template for you to extend and customize for the needs of your application. However they are ordered by which I prefer based on my experience with them and my general opinion of them, in an ascending order. I'll start with the most basic ones where you'll have to work out a few things on your own, such as atomic deployment. The sections on each tool will get shorter and shorter as you will be able to tell and that is because the later tools will solve common tasks for you so you don't have to. If you're looking for a modern tool aimed at PHP applications I suggest you skip to [Rocketeer](#rocketeer) or [Deployer](#deployer) straight away. If you however want to understand the fundamentals of what these tools solve for you, you should follow along with all the tools to get a better understanding of some more low level concepts.
 
 {pagebreak}
 
@@ -1138,6 +1138,7 @@ The good parts are:
 
 * Intuitive and fluent functional approach to deployment
 * Separate your deploy process from your code
+* Very basic when you initialize it
 
 The less good parts are:
 
