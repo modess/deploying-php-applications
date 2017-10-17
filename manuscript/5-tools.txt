@@ -8,7 +8,7 @@ What a tool provides for us is a way of gathering related parts of our deploy in
 
 Most tools do an excellent job in separating your environments. They make it easy to make every deploy to any environment repeatable. Perhaps you don't want to minify your Javascript and CSS files when you deploy to a testing environment? This makes debugging easier. But when you deploy to the staging or production environment you should do it. The tools will help you run the commands you want, when you want and where you want. Some of them also make sure that every person deploying have the correct endpoints to the environments for the deploys.
 
-I will below cover a few of the common tools. They all have their pros and cons as with everything when it comes to technology. I won't tell you if one tool is better than another because it's a matter of taste and what works best for you and your application. With each tool I'll provide a cookbook on how to automate builds and also how to automate atomic builds. These will serve the purpose of how to get started with them and provides a good boilerplate set up for extending them to a full fledged deploy tool suitable for your application.
+I'll below cover a few of the common tools. They all have their pros and cons as with everything when it comes to technology. I won't tell you if one tool is better than another because it's a matter of taste and what works best for you and your application. With each tool I'll provide a cookbook on how to automate builds and how to get started with them, it'll provide a template for you to extend and customize for the needs of your application. However they are ordered by which I prefer based on my experience with them and my general opinion of them, in an ascending order. I'll start with the most basic ones where you'll have to work out a few things on your own, such as atomic deployment. The sections on each tool will get shorter and shorter as you will be able to tell and that is because the later tools will solve common tasks for you so you don't have to. If you're looking for a modern tool aimed at PHP applications I suggest you skip to [Rocketeer](#rocketeer) or [Deployer](#deployer) straight away. If you however want to understand the fundamentals of what these tools solve for you, you should follow along with all the tools to get a better understanding of some more low level concepts.
 
 {pagebreak}
 
@@ -735,7 +735,9 @@ INFO [c8e8e7be] Running /usr/bin/env composer install --no-dev --prefer-dist --n
 
 Either your application is working now or it is crashing due to the fact that it's not allowed to write to the `storage/` directory in the application. We start by installing the file permission plugin for Capistrano on our system
 
+~~~
 gem install capistrano-file-permissions
+~~~
 
 We then require it in our `Capfile` and use it to set proper permissions
 
@@ -787,11 +789,11 @@ The less good parts are:
 
 {pagebreak}
 
-## 5.4 Rocketeer
+## 5.4 Rocketeer{#rocketeer}
 
 If you want a tool that is tightly integrated with PHP, fast, modern and easy to use, this could be the tool you're looking for. It has taken many proven concepts from predecessors and made it into a tool worthy of modern development and deployment. It is coded in PHP but it can manage deploying any type of application. It provides a powerful set of features that is probably enough for many applications, but it is also based on a modular approach that enables you to swap, extend or hack parts to fit your particular need if necessary.
 
-It has a very interesting philosophy while being heavy influenced and dependant on the Laravel framework, it has many `illuminate/*` dependencies which is core Laravel packages. Through this it's able to leverage a lot of power for configuration, events, remote execution, cli among other things. There is also a focus on readability and simplicity for the API it provides.
+It has a very interesting philosophy while being heavy influenced and dependent on the Laravel framework, it has many `illuminate/*` dependencies which is core Laravel packages. Through this it's able to leverage a lot of power for configuration, events, remote execution, cli among other things. There is also a focus on readability and simplicity for the API it provides.
 
 Just as Capistrano this tools treats deploys atomically and has an almost identical folder structure at the remote deploy locations. While we have to mimic this functionality manually with git hooks or Phing, we don't have to worry about it here. Other than it allows us to manage things in multiples; multiple servers, multiserver connections and multiple stages per server.
 
@@ -800,6 +802,7 @@ Just as Capistrano this tools treats deploys atomically and has an almost identi
 
 There are two good ways of installing the tool, either downloading the *phar* or installing it through Composer. I'm always a fan of using Composer so I would recommend installing it that way:
 
+{lang=bash}
 ~~~
 composer require anahkiasen/rocketeer --dev
 ~~~
@@ -970,3 +973,173 @@ The good parts are pretty similar to Capistrano, but with a few added benefits:
 The less good parts are:
 
 * No obvious ones really if you're a PHP developer
+
+{pagebreak}
+
+## 5.5 Deployer {#deployer}
+
+The flow and intuitive interface of [Deployer's](http://deployer.org/) makes me very excited about it. It's written in PHP and is sporting all the good stuff that you'd expect from a modern tool. This includes support for multiple servers and stages, deployment in parallel, atomic deployment and on top of that: it's fast. What I really enjoy about it is the fluent way you define your process in it, it provides a smooth and enjoyable experience. And in some cases everything works out of the box with their *recipes* available for a few frameworks and general use cases.
+
+One could argue that the simplicity of the tool is what might make it suffer in some cases. It revolves around one file, a `deploy.php` file in your project's root directory. You could include other files in that, making your own folder structure for your process; and this could be seen as both a plus or a minus. It provides you with flexibility, but leaves a lack of structure and common practices. This becomes obvious when you compare it with [Rocketeer](#rocketeer) for example, that has a very defined and opinionated structure.
+
+It has been around for a few years and have reached maturity and stability. As of writing this the maintainers are actively working on the tool and updating it on a regular basis, it also have a solid contributor foundation.
+
+### Installation
+
+My preferred way of installation is always through Composer when available, and that holds true for Deployer. Install it in your project or globally by requiring the package. At the time of writing this the latest version is `5.1.3` so that is the one I'll be using.
+
+{lang=bash}
+~~~
+# Local
+composer require deployer/deployer:5.1.3 --dev
+
+# Global
+composer global require deployer/deployer:5.1.3
+~~~
+
+Then if you have your PATH configured correctly you can run the binary through:
+
+{lang=bash}
+~~~
+dep
+~~~
+
+### Configuring
+
+Start off by initializing it for your project, do this in the root folder of the project.
+
+{lang=bash}
+~~~
+dep init
+~~~
+
+You will be prompted if you want to use one of the recipes provided by the tool, choose one if applicable or go with the *Common* one. I went with the *Common* recipe since I'll be deploying my [deploy test application](https://github.com/modess/deploy-test-application) which has some dependencies and a storage folder. You'll also be prompted for the location of the repository you wish to deploy, in my case `git@github.com:modess/deploy-test-application.git` which it automatically detected. Then you choose if you want to send anonymous statistics to help and aid the developers of the tool, if you don't have sensitive things you're deploying I suggest you answer *yes* here. Sharing is caring.
+
+A `deploy.php` have now been generated in the root of your project, take a quick look at it. You can already tell the fluent and nice interface the tool have for structuring your deployment process. This is also one of the beautiful things with the tool, a single file is generated and that is all you need for now. When your application grows you might need to extends this and then you're able to do that.
+
+I> ### Web server document root
+I>
+I> Deployer uses **current** as a symbolic link to the current deploy, we need our web server to use that as the document root.
+
+#### Hosts
+
+I'll start my cleaning up the host(s) I want to deploy to. I'll only have one since this is a simple test deployment environment, in a real world scenario you'll probably have multiple ones for staging, production, and so on.
+
+{lang=php}
+~~~
+leanpub-start-delete
+host('project.com')
+    ->stage('production')
+    ->set('deploy_path', '/var/www/project.com');
+    
+host('beta.project.com')
+    ->stage('beta')
+    ->set('deploy_path', '/var/www/project.com'); 
+leanpub-end-delete
+leanpub-start-insert
+host('my-app.com')
+    ->stage('production')
+    ->set('deploy_path', '/var/www/my-app.com');
+leanpub-end-insert   
+~~~
+
+#### Shared and writable files/folders
+
+We need to make sure that we have our `storage` folder. Setting up shared and writable folders and files comes right out of the box with Deployer, take a look at these configuration settings.
+
+{lang=php}
+~~~
+set('shared_files', []);
+set('shared_dirs', []);
+set('writable_dirs', []);
+~~~
+
+We'll update this to:
+
+{lang=php}
+~~~
+set('shared_dirs', ['storage']);
+set('writable_dirs', ['storage']);
+~~~
+
+#### Restarting services
+
+Then we have a task for restarting the PHP-FPM service, and in case you're running *nginx* as your web server this is something that should be done. I however don't suggest you restart it, but reload it. Depending on the linux distribution you're running on your server(s) you'll have to change this accordingly. I use *Ubuntu* and PHP version 7.1, so I changed it to:
+
+{lang=php}
+~~~
+leanpub-start-delete
+task('php-fpm:restart', function () {
+    // The user must have rights for restart service
+    // /etc/sudoers: username ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
+    run('sudo systemctl restart php-fpm.service');
+});
+leanpub-end-delete
+leanpub-start-insert
+task('php-fpm:restart', function () {
+    run('sudo service php7.1-fpm reload');
+});
+leanpub-end-insert   
+~~~
+
+### Deploying
+
+That's all! We can now deploy the application by running
+
+~~~
+dep deploy production
+~~~
+
+A nice and simple list of tasks being executed by the tool is displayed.
+
+### Tasks
+
+Deployer comes with a set of predefined recipes as they're called, which consists of _tasks_. A task is a step performed in the deployment process necessary for your application to work properly once deployed. This can range from simple one line bash commands such as `php artisan migrate` to more advanced steps such as telling your load balancer that "I'm deploying, leave me out of rotation for now" and then telling it that you're back.
+
+When I initiated my project the recipe I used generated the following tasks for deploying:
+
+{lang=php}
+~~~
+desc('Deploy your project');
+task('deploy', [
+    'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    'deploy:shared',
+    'deploy:writable',
+    'deploy:vendors',
+    'deploy:clear_paths',
+    'deploy:symlink',
+    'deploy:unlock',
+    'cleanup',
+    'success'
+]);
+~~~
+
+All of these come out of the box with the tool because they are general tasks for deploying a PHP application. If you write your own tasks you can either add your task to this list where you see fit or use a hook, as can be seen in the task for restarting PHP-FPM:
+
+{lang=php}
+~~~
+desc('Restart PHP-FPM service');
+task('php-fpm:restart', function () {
+    run('sudo service php7.1-fpm reload');
+});
+after('deploy:symlink', 'php-fpm:restart');
+~~~
+
+Here we tell it that after the `deploy:symlink` task is executed, execute our task `php-fpm:restart`.
+
+When your application have special requirements you can easily write your own tasks and make sure they are executed just where you need them. If needed you can also start splitting up your `deploy.php` into more parts, having one monolithic file might not be good if it grows too much.
+
+### Pros and cons
+
+The good parts are:
+
+* Intuitive and fluent functional approach to deployment
+* Separate your deploy process from your code
+* Very basic when you initialize it
+
+The less good parts are:
+
+* Very basic when you initialize it
