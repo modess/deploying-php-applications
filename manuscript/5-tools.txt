@@ -789,7 +789,7 @@ The less good parts are:
 
 {pagebreak}
 
-## 5.4 Rocketeer{#rocketeer}
+## 5.4 Rocketeer {#rocketeer}
 
 If you want a tool that is tightly integrated with PHP, fast, modern and easy to use, this could be the tool you're looking for. It has taken many proven concepts from predecessors and made it into a tool worthy of modern development and deployment. It is coded in PHP but it can manage deploying any type of application. It provides a powerful set of features that is probably enough for many applications, but it is also based on a modular approach that enables you to swap, extend or hack parts to fit your particular need if necessary.
 
