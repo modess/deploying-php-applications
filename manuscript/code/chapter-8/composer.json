@@ -1,7 +1,0 @@
-{
-  "name": "my-app",
-  "require": {
-    "robmorgan/phinx": "^0.4.4",
-    "mustangostang/spyc": "^0.5.1"
-  }
-}

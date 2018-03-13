@@ -1,6 +1,0 @@
-#!/bin/bash
-cd ..
-unset GIT_DIR
-
-env -i git reset --hard
-git checkout -f
