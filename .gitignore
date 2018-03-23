@@ -1,9 +1,4 @@
-/Icon*
-.DS_Thumb
-.dropbox
-/preview
-/published
-/proofread
-/manuscript/Subset.txt
-_toc.txt
-sync-to-dropbox
+_site
+.sass-cache
+.jekyll-metadata
+node_modules/

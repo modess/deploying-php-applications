@@ -1,0 +1,178 @@
+<section id="features" class="features">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="section-heading">
+          <h2>Book contents</h2>
+          <p class="text-muted">What it's all about</p>
+          <hr>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <h2>Why a book on deploying PHP applications?</h2>
+        <p>In the past years the evolution of PHP has escalated and it’s now a mature language. Applications of the past was
+          often a spaghetti code mayhem. Splitting up functionality between files was a best case scenario, including functions
+          perhaps. Many times version control system were not used. All that has changed. Now that the development process
+          has matured to such a degree; it’s time for our deployment processes to take the same route. An application today
+          often has agile requirements on it. Having an agile deployment process is important for fulfilling the
+          <a href="http://www.agilemanifesto.org/">the agile manifesto</a>.</p>
+        <p>Usually a deployment process is an ad-hoc construction. It gets patched and updated as the application matures. This
+          can spell trouble in many ways. Domain knowledge might be concentrate to one person or a few people. The application’s
+          need outgrows the deployment tool and a switch is necessary. Automation splits up to some manual steps. This doesn’t
+          have to happen and with planning before implementation we can side step it. In the book you will find achievable
+          goals. Once fulfilling them, you can enjoy a stable and long lasting deployment process for your application.</p>
+        <h2>One click deployment</h2>
+        <p>The holy grail in deployment of web applications is having
+          <em>one click deployment</em>. Is most cases that’s not one click of a button, instead it’s through one command. The
+          foundation for this is automation, a key aspect in minimizing errors. Especially human errors since they will always
+          arise when involving people, nobody is perfect. Developers and team members come and go also. Making it possible
+          for anyone to deploy at any time can benefit the development process a lot. Learn why you should, and how to automate
+          your full deploy process to reap all the benefits of it.</p>
+        <h2>Zero downtime deployment</h2>
+        <p>When we deploy we don’t want any down time for our application. Once an application reaches a critical mass of users,
+          deployment will collide with user experience. This is why we strive for zero downtime deployment. This is an informal
+          term, the more formal one is: atomic deploys. Whatever you wish to call it, it’s important to “hide” deployment
+          from the end user. I have written a
+          <a href="https://modess.io/atomic-deploy-for-php-applications/">blog post on atomic deploys</a> that you can read.</p>
+        <p>The process for achieving this is on the server-side. Symbolic linking of folders is the core part. The book discusses
+          the concept of this structure and the parts of it. To achieve it you must take certain things in consideration
+          for your application. This is a concept based on builds of your application. That’s why you must make sure that
+          your application works when switching builds. Things can break if files or folders aren’t persisted between builds
+          for example.</p>
+        <h2>Meeting your PHP deploy needs</h2>
+        <p>The success and wide spread popularity of PHP is something you can’t sweep under the rug. The
+          <a href="http://w3techs.com/technologies/details/pl-php/all/all">stats provided by w3tech</a> are astounding:</p>
+        <blockquote>
+          <p>PHP is used by 81.8% of all the websites whose server-side programming language we know. </p>
+        </blockquote>
+        <p>There is no other language that even comes closed to the sheer amount of web sites built in it. This takes to me
+          my next point: every application is unique. Even if you clone a repository of a deployed application and deploy
+          it yourself it will have slight differences. The server software and OS, or the configuration of that software
+          and OS, are just some examples.</p>
+        <p>Because of this it’s impossible to take a
+          <em>one-size fits all</em>-approach. What I discuss in the book are best practices for deploying PHP applications,
+          and some tools to help you with that. Whether you have an open source side-project with 10 users or a commercial
+          application with millions of users, they apply just as well.</p>
+        <p>You are maybe interested in deploying the following popular frameworks? But it won’t matter which framework or type
+          of code you have.</p>
+        <h3>Laravel deployment</h3>
+        <p>A fan of Laravel? So am I. It’s not a surprise that its popularity has exploded during the last years. Laravel deployment
+          is easy to set up and automate since it provides the
+          <code>artisan</code> CLI tool. With this you have the commands you need at your fingertips. Clearing caches, running
+          database migrations and so on. If you have a Laravel application you can apply any concept found in this book.
+          </p>
+        <h3>Symfony2 deployment</h3>
+        <p>Consider yourself a more “hardcore” developer and think Laravel is more suited for kindergarten? Just kidding, I
+          hope you get what I mean. Symfony2 does deliver some added flexibility and granularity. That is often forsaken
+          in Laravel for simplicity and explicity. And hey, it’s built on top of the amazing components from Symfony. Here
+          you also have a CLI runner that makes setting up a great Symfony2 deployment a breeze.</p>
+        <h2>PHP deployment tools</h2>
+        <p>There are some PHP deployment tools out there. Some specific to PHP and some aimed at other web applications. Some
+          target PHP applications, but has a code base and an interface in another language. Some are old and mature, some
+          are new and cutting edge. Knowing the pros and cons of the available deployment tool is what is important. This
+          helps you set up a long lasting deploy process.</p>
+        <p>The book features deployment tools worth mentioning, from simple to more advanced ones. You want to meet certain
+          needs that your application has. Installing dependencies, migrating databases, run tests, etc. The book demonstrates
+          how to automate your deployment with these needs in mind.</p>
+        <h3>Capistrano for PHP</h3>
+        <p>A tool written in Ruby and have been around for a long time. Its original intent is to deploy Ruby applications.
+          But its flexibility allows for deployment of any kind of web application. As long as you’re willing to write some
+          code in Ruby. Many recipes are available that deals with using Capistrano for PHP deployment: for example a Composer
+          recipe.</p>
+        <h4>Capify (coming soon)</h4>
+        <p>Added flexibility and integration for PHP applications when deploying with Capistrano.</p>
+        <h3>Rocketeer</h3>
+        <p>One of the most interesting PHP deployment tools available. It still has that fresh deployment tool smell. Rocketeer
+          takes inspiration from Laravel and leverages a lot of code from it. All configuration and code you write is PHP.
+          It has an event system and a task based architecture. This allows for you to extend it beyond anything you might
+          need. Deploys run through executing tasks on a SSH connection to your server(s). Pull code from your repository
+          of choice, with native Git and SVN support.</p>
+        <h3>Phing PHP</h3>
+        <p>A good old fashioned build tool based on Apache Ant. Phing PHP has been around for over ten years(!); that kind of
+          maturity is hard to compete with. This comes with an older interface, where writing build files in XML and the
+          tool itself is written in Java. But when looking for stability it’s a great tool and worth mentioning. But do not
+          fear, extending it means writing PHP code. </p>
+        <h3>Git push to deploy</h3>
+        <p>An often overlooked tool in deployment. Most people look at it as a pure version control system. But there are a
+          few gems (no Ruby pun intended) in there so you can extend it to a deployment tool and make a git push to deploy.
+          These gems are called
+          <a href="https://git-scm.com/book/uz/v2/Customizing-Git-Git-Hooks">git hooks</a> and you can use them to run commands at certain times in git operations. Both on the client side
+          and the server side. You can run commands before each commit, or run commands after each push. The latter allows
+          it to be extended to a deployment tool. I have written a
+          <a href="https://modess.io/git-push-deploy-tutorial-web-applications/">introductory blog post to deployment with git hooks</a> if you are interested in learning a little more.</p>
+        <p>An often overlooked tool in deployment. Most people look at it as a pure version control system. But there are a
+          few gems (no Ruby pun intended) in there so you can extend it to a deployment tool and make a git push to deploy.
+          These so called
+          <a href="https://git-scm.com/book/uz/v2/Customizing-Git-Git-Hooks">git hooks</a> are the gems, and you can use them to run commands at certain times in git operations. Both on the
+          client side and the server side. You can for example run commands before each commit, or run commands after each
+          push. The latter allows extending it to a deployment tool. If it interest you, I wrote
+          <a href="https://modess.io/git-push-deploy-tutorial-web-applications/">an introduction for deployment with git hooks</a> a while back.</p>
+        <h3>Deployer</h3>
+        <p>With a good philosophy and structure, Deployer is a solid option for a deployment tool. It’s written in PHP which
+          makes is integrate with your application. One of the most interesting features is parallell tasks: this way you
+          can deploy to multiple servers at the same time. It also features some recipes out of the box for popular tools
+          and frameworks: Composer, Laravel, Symfony, Yii, Zend and WordPress. This way you get good defaults for your application
+          without having to worry about it.</p>
+        <h3>Magallanes (coming soon)</h3>
+        <p>Another tool built with PHP and can be integrate with your application. You configure Magallanes the tool through
+          YAML, that can be a positive thing since it brings a certain amount of clarity. For simple deployments it provides
+          the option of rsyncing builds to your server instead of pulling code from a repository. This can be effective in
+          small applications you’re the only developer on that you want to make a quick deploy for. It has some pre-configured
+          recipes for common tools and frameworks also. The list is not that extensive though: Composer, Symfony2 and Magento.</p>
+        <h2>Git work flow</h2>
+        <p>Using git as your version control system is in no way mandatory. But it does have some great features that makes
+          your life easier when managing code and environments.
+          <em>Git-flow</em> is a git work flow that provides flexibility. The adoption is widespread and it all started out with
+          a blog post by Vincent Driessen called:
+          <a href="http://nvie.com/posts/a-successful-git-branching-model/">A successful Git branching model</a>. With it you can construct excellent release management processes. You can
+          make sure that the right code ends up in the right environment at the right time.</p>
+        <p>If you don’t use git as your version control there are many ideas and concept from it that you can apply. In its
+          purity it’s a branching strategy and nothing else. You have a master branch, a develop branch, feature branches,
+          release branches and hotfix branches. With that branch structure you can enjoy a smooth release cycle.</p>
+        <h2>How to use Composer</h2>
+        <p>Almost no modern PHP applications today can live without Composer. Those applications that can live without it are
+          often old or aimed at a specific purpose. How to use Composer becomes important in this. And it’s not just about
+          installing and updating dependencies. It’s about dependency management. Composer is a package manager, but it does
+          not enforce any kind of best practices for you. It tries to help out, but those helpful hints often make assumptions
+          about your application.</p>
+        <p>Semantic versioning has taken the dependency management world by storm lately. One of the founders of github introduced
+          it and all major package managers uses it today. This is how we specify what versions we want our package manager
+          to install. But there are many cases where it is hard to understand which version a package the manager will install.
+          Learn about the different version constraints available and how to use them.</p>
+        <h2>Environments</h2>
+        <p>Shipping code is not about pushing code straight to a production environment. Sometimes it might be, but that is
+          seldom a good thing. Having multiple environments or stages for your application increases quality of the code
+          that reach your end user. When shipping code through a chain of environments, looked at and tested by more than
+          the developer, code quality will increase. </p>
+        <p>A solid infrastructure consists of at least three environments: your local development environment, a staging environment
+          and a production environment. Some applications will have even more environments depending on complexity and requirements.
+          We should always test code in a staging environment that resembles the production environment.</p>
+        <h3>Configuration with PHP dotenv</h3>
+        <p>In all these environments you need different configuration. PHP dotenv is a great tool for configuring your application
+          through a single ini file. We can configure many things with it, for example: logging levels, debug flags, database
+          connections, cache connections and SMTP credentials. You also don’t want to store credentials in your repository.
+          Having one local file on each environment with all configuration is the way to go. Including it as a Composer dependency
+          and bootstrapping it is simple. Many frameworks have this feature already built-in also. </p>
+        <h2>Phinx migrations for your database</h2>
+        <p>The chapter is about the concept of PHP database migration in general. You want to have your database schema in your
+          version control, just as with your code. The ability to deploy code along changes to your database in essential
+          for automation. You might have a Laravel application that does Laravel migrations. Or you might have an application
+          with stand-alone Doctrine migrations. Phinx migrations is the tool I’ve decided to use for demonstrating implementation.
+          It doesn’t matter as long as you have it in place. Not just in deployment, but also in rollbacks. Some aspects
+          are often forgotten in database migrations, such as preventing data loss. I think it deserves a thought on how
+          to prevent this also, and that is in the book.</p>
+        <p>Phinx is a great stand-alone tool we can integrate in any application. You can write your schema migrations in pure
+          PHP or pure SQL. What is great about writing them in PHP is that you can plug in different database adapters. It
+          has support for MySQL, PostgreSQL, SQLite and Microsoft SQL Server.</p>
+        <h2>Running tests</h2>
+        <p>Tests are an important part of an application, and something you should write to some extent. This book is not about
+          writing and maintaining tests, there are many resources on that already. But running tests is something that should
+          be a step in your deployments. Different kind of tests have a time and a place where they should run. Unit tests,
+          acceptance tests, end-to-end testing and manual tests are examples of tests that can exists in your application.
+          When and where should you run them? How do you deal with failing tests? These are questions to take into consideration
+          for your deploy process.</p>
+      </div>
+    </div>
+</section>
