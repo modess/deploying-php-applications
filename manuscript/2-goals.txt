@@ -121,9 +121,9 @@ We can condense the goals in to a bullet list since everybody likes a clear and 
 
 **Atomic**. Nothing in your deploy should be able to break your application and you should comply with the concept of completing a build before serving it to any user. The transition between the previous and the new build should be as close to instant as possible.
 
-**Simple**. Everyone should understand it and use it. Everyone should feel confident and comfortable with it. This is true for deploying, making changes or extending the process.
-
 **Reversible**. Because it sounds better than "rollbackable". Being able to roll back is just as important as deploying your changes and this reverse process should also follow the list of goals.
+
+**Simple**. Everyone should understand it and use it. Everyone should feel confident and comfortable with it. This is true for deploying, making changes or extending the process.
 
 **Fast**. You want it to be fast because speed is key in being able to deploy often. Fast rollbacks combined with fast deploys is another key which spells confidence. If something breaks you can easily go back and fix things without that stress knowing production is in a broken state.
 
