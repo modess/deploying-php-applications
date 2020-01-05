@@ -63,7 +63,7 @@ The most conventional way of sending out notifications is with a good old fashio
 
 ### Slack
 
-Slack is the rising star of group communication for companies and their teams, for good reasons. Having a channel for your deploys can be a good way of the right people getting notified of relevant information. They have an API which makes it really to send notifications, and there are many plugins that has been built to use it. If a plugin does not exists for your deploy tool you can always use cURL or something similar for sending requests to it.
+Slack is the rising star of group communication for companies and their teams, for good reasons. Having a channel for your deploys can be a good way of the right people getting notified of relevant information. They have an API which makes it really easy to send notifications, and there are many plugins that has been built to use it. If a plugin does not exists for your deploy tool you can always use cURL or something similar for sending requests to it.
 
 | Tool       | Plugin                                                                    |
 | ---------- | ------------------------------------------------------------------------- |
