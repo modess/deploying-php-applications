@@ -383,7 +383,7 @@ There can be one or many target elements, and they can depend on each other. Thi
 {lang=xml}
 <<(code/chapter-5/targets.xml)
 
-If you would run `phing` now nothing would really happen since we only have comments in the targets, but you should get a output showing that the build file was used and the targets where executed in the right order. Notice that we receive a waning that our target has no tasks or dependencies though:
+If you would run `phing` now nothing would really happen since we only have comments in the targets, but you should get a output showing that the build file was used and the targets where executed in the right order. Notice that we receive a warning that our target has no tasks or dependencies though:
 
 ~~~
 Buildfile: /path/to/my-app/build.xml
