@@ -16,6 +16,7 @@ In chronological order:
 * simpgeek <[https://github.com/simpgeek](https://github.com/simpgeek)>
 * begumserraaydin <[https://github.com/begumserraaydin](https://github.com/begumserraaydin)>
 * mathieuimbert <[https://github.com/mathieuimbert](https://github.com/mathieuimbert)>
+* DivineDominion <[https://github.com/DivineDominion](https://github.com/DivineDominion)>
 
 * *[Your name or handle] <[email or website]>*
 
