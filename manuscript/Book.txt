@@ -10,6 +10,6 @@
 06-version-control.md
 07-dependencies.md
 08-database-migrations.md
-08-running-tests.md
+09-running-tests.md
 10-logs-and-notifications.md
 11-conclusion.md
