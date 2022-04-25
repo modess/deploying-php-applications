@@ -1,15 +1,15 @@
 {frontmatter}
-00-introduction.txt
+00-introduction.md
 
 {mainmatter}
-01-automate.txt
-02-goals.txt
-03-environments.txt
-04-atomic-deploys.txt
-05-tools.txt
-06-version-control.txt
-07-dependencies.txt
-08-database-migrations.txt
-08-running-tests.txt
-10-logs-and-notifications.txt
-11-conclusion.txt
+01-automate.md
+02-goals.md
+03-environments.md
+04-atomic-deploys.md
+05-tools.md
+06-version-control.md
+07-dependencies.md
+08-database-migrations.md
+08-running-tests.md
+10-logs-and-notifications.md
+11-conclusion.md

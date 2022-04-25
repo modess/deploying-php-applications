@@ -1,5 +1,5 @@
 {frontmatter}
-00-introduction.txt
+00-introduction.md
 
 {mainmatter}
-01-automate.txt
+01-automate.md

@@ -136,7 +136,7 @@ function sendEmail ($to, $from, $subject, $message) {
 
 ## 3.6 Production environment
 
-This one is quite obvious and it's the server(s) serving your application to your end users. Whether it's one server or multiple ones behind load balancer; this is the endpoint for your users.
+This one is quiet obvious and it's the server(s) serving your application to your end users. Whether it's one server or multiple ones behind load balancer; this is the endpoint for your users.
 
 It will contain an as stable as possible code base with code that is extensively tested and as bug free as possible. What is to be said here is that **it's for this environment we need a great deployment process**. All the effort we put in to the process will reflect on the quality and stability of your production environment.
 
