@@ -3,9 +3,9 @@ function env($key, $default = null)
     $value = getenv($key);
 
     if ($value === false) {
-        return value($default);
+        return $default instanceof Closure ? $default() : $default;
     }
-    
+
     switch (strtolower($value)) {
         case 'true':
         case '(true)':
